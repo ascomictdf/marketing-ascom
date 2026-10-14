@@ -8,8 +8,15 @@ const COOKIE_NAME = 'ictdf_session';
 const ROLES = ['admin_geral', 'admin', 'editor', 'visualizador'];
 const WRITE_ROLES = ['admin_geral', 'admin', 'editor'];
 
+function isProduction() {
+  return process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+}
+
 function authSecret() {
-  return process.env.AUTH_SECRET || 'dev-only-change-this-secret-before-production';
+  if (process.env.AUTH_SECRET) return process.env.AUTH_SECRET;
+  // Em produção, uma chave padrão (visível no código) permitiria forjar sessões.
+  if (isProduction()) throw new Error('AUTH_SECRET ausente. Defina a variável AUTH_SECRET na Vercel.');
+  return 'dev-only-change-this-secret-before-production';
 }
 
 function signSession(user) {

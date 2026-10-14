@@ -44,9 +44,13 @@ async function ensureDb() {
     await db`alter table app_users add column if not exists reset_requested_at timestamptz`;
 
     const email = (process.env.ADMIN_EMAIL || 'ascom@ictdf.org.br').trim().toLowerCase();
-    const password = process.env.ADMIN_PASSWORD || 'ascomictdf';
+    // Senha padrão só fora de produção: em produção o admin inicial só é criado com ADMIN_PASSWORD.
+    const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+    const password = process.env.ADMIN_PASSWORD || (isProduction ? '' : 'ascomictdf');
     const exists = await db`select id from app_users where email = ${email} limit 1`;
-    if (!exists.length) {
+    if (!exists.length && !password) {
+      console.warn('ADMIN_PASSWORD ausente: usuário administrador inicial não foi criado.');
+    } else if (!exists.length) {
       const hash = await bcrypt.hash(password, 12);
       await db`insert into app_users (name, email, password_hash, role) values ('Administrador', ${email}, ${hash}, 'admin')`;
     }

@@ -55,7 +55,7 @@ Configure na Vercel em **Project Settings → Environment Variables**:
 DATABASE_URL="postgres://..."
 AUTH_SECRET="gere-uma-chave-grande"
 ADMIN_EMAIL="ascom@ictdf.org.br"
-ADMIN_PASSWORD="ascomictdf"
+ADMIN_PASSWORD="defina-uma-senha-forte"
 APP_URL="https://seu-projeto.vercel.app"
 ```
 
@@ -107,7 +107,7 @@ e `POST /api/users` com `{ "action": "reset-link", "email": "..." }` (só Admin 
 O primeiro acesso da API cria automaticamente o usuário:
 
 - E-mail: `ascom@ictdf.org.br`
-- Senha inicial: `ascomictdf`
+- Senha inicial: o valor de `ADMIN_PASSWORD` (obrigatória em produção)
 - Papel: `admin`
 
 Depois do primeiro login, use a opção **Esqueci minha senha** para redefinir quando
