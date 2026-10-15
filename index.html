@@ -714,11 +714,19 @@ a.open-btn{text-decoration:none}
 .ap-new-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ap-new-foot .ap-tip{font-size:12px;color:var(--texto-suave);margin-right:auto}
 .ap-new-foot .btn{flex:0 0 auto}
-.camp-checks{display:flex;flex-direction:column;gap:8px;background:var(--surface-2);border:1.5px solid var(--cinza-borda);border-radius:12px;padding:10px 12px;max-height:170px;overflow:auto}
-.camp-check{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;color:var(--texto);cursor:pointer}
-.camp-check input{width:17px;height:17px;accent-color:var(--azul);flex:0 0 17px}
-.camp-check .dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
-.camp-check-empty{font-size:12.5px;color:var(--texto-suave);line-height:1.45}
+.camp-checks{display:flex;flex-direction:column;gap:7px;max-height:212px;overflow:auto;padding:2px}
+.camp-checks .camp-check{position:relative;display:flex;align-items:center;gap:10px;margin:0;padding:10px 12px;border-radius:11px;border:1.5px solid var(--cinza-borda);border-left:4px solid var(--cc,var(--azul-300));background:var(--surface-2);font-size:13.5px;font-weight:700;color:var(--texto);cursor:pointer;transition:border-color .15s,background .15s}
+.camp-checks .camp-check:hover{border-color:var(--azul-300);border-left-color:var(--cc,var(--azul-300))}
+.camp-checks .camp-check input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.camp-checks .camp-check .cc-box{width:20px;height:20px;flex:0 0 20px;border-radius:6px;border:2px solid color-mix(in srgb,var(--texto-suave) 60%,transparent);background:var(--cinza-card);display:grid;place-items:center;color:#fff;transition:.15s}
+.camp-checks .camp-check .cc-box svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:.15s}
+.camp-checks .camp-check .cc-name{flex:1;min-width:0;overflow-wrap:anywhere;line-height:1.35}
+.camp-checks .camp-check .cc-tag{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:2px 7px;border-radius:6px;background:rgba(148,163,184,.18);color:var(--texto-suave);flex:0 0 auto}
+.camp-checks .camp-check:has(input:checked){background:color-mix(in srgb,var(--cc,var(--azul-300)) 12%,var(--surface-2));border-color:color-mix(in srgb,var(--cc,var(--azul-300)) 55%,var(--cinza-borda))}
+.camp-checks .camp-check input:checked+.cc-box{background:var(--cc,var(--azul-300));border-color:var(--cc,var(--azul-300))}
+.camp-checks .camp-check input:checked+.cc-box svg{opacity:1;transform:none}
+.camp-checks .camp-check input:focus-visible+.cc-box{outline:3px solid var(--azul-300);outline-offset:2px}
+.camp-check-empty{font-size:13px;color:var(--texto-suave);line-height:1.45;padding:12px;border:1.5px dashed var(--cinza-borda);border-radius:11px;text-align:center}
 
 /* FLUXOS DE PROJETO (mapa de etapas) */
 .fluxo-card{background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--sombra);margin-bottom:18px}
@@ -2114,7 +2122,7 @@ body.reconnect-on{overflow:hidden}
         <div class="field">
           <label>Campanhas</label>
           <div class="camp-checks" id="f-campanhas"></div>
-          <div class="hint">Marque uma ou mais campanhas. Deixe tudo desmarcado se o agente não pertencer a nenhuma campanha.</div>
+          <div class="hint">Só aparecem campanhas <b>em andamento</b>. Marque uma ou mais, ou deixe tudo desmarcado se o agente não pertencer a nenhuma.</div>
         </div>
         <div class="field">
           <label>Responsável</label>
@@ -6002,12 +6010,15 @@ function buildEmojiPick(){
 function renderAgentCampaignChecks(selected){
   const box=$('#f-campanhas');if(!box)return;
   selected=new Set(selected||[]);
-  if(!(state.campanhas||[]).length){
-    box.innerHTML='<div class="camp-check-empty">Nenhuma campanha cadastrada. O agente ficará sem campanha.</div>';
+  // só campanhas em andamento (mantém as já vinculadas, mesmo encerradas, para não perder o vínculo sem querer)
+  const list=(state.campanhas||[]).filter(c=>c.status==='andamento'||selected.has(c.id));
+  if(!list.length){
+    box.innerHTML='<div class="camp-check-empty">Nenhuma campanha em andamento. O agente ficará sem campanha.</div>';
     updateAgentCampaignHint();
     return;
   }
-  box.innerHTML=state.campanhas.map(c=>`<label class="camp-check"><input type="checkbox" data-agentcamp="${c.id}" ${selected.has(c.id)?'checked':''} /><span class="dot" style="background:${c.cor}"></span><span>${esc(c.nome)}</span></label>`).join('');
+  const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  box.innerHTML=list.map(c=>`<label class="camp-check" style="--cc:${esc(c.cor||'#2E5BBE')}"><input type="checkbox" data-agentcamp="${c.id}" ${selected.has(c.id)?'checked':''} /><span class="cc-box">${CHECK}</span><span class="cc-name">${esc(c.nome)}</span>${c.status!=='andamento'?'<span class="cc-tag">encerrada</span>':''}</label>`).join('');
   $$('#f-campanhas [data-agentcamp]').forEach(i=>i.addEventListener('change',updateAgentCampaignHint));
   updateAgentCampaignHint();
 }
