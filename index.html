@@ -682,14 +682,38 @@ a.open-btn{text-decoration:none}
 .trow .tr-meta{display:flex;gap:7px;align-items:center;margin-top:5px;flex-wrap:wrap}
 .trow .tr-actions{display:flex;gap:6px;align-items:center;flex-shrink:0}
 .trow select.tstat{padding:7px 10px;border:1.5px solid var(--cinza-borda);border-radius:9px;font-size:12.5px;font-family:inherit;background:var(--cinza-card);color:var(--texto);outline:none;cursor:pointer}
-.agent-prompt-box{border:1.5px dashed var(--cinza-borda);border-radius:13px;padding:14px;background:var(--surface-2)}
-.agent-prompt-add{display:grid;grid-template-columns:minmax(160px,.7fr) minmax(220px,1fr) auto;gap:8px;align-items:start}
-.agent-prompt-add textarea{min-height:44px}
-.agent-prompt-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.agent-prompt-item{display:flex;align-items:flex-start;gap:9px;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:11px;padding:9px 10px}
-.agent-prompt-item b{display:block;font-size:13px}
-.agent-prompt-item span{display:block;color:var(--texto-suave);font-size:12px;line-height:1.35;max-height:36px;overflow:hidden}
-.agent-prompt-item .icon-btn{margin-left:auto;flex:0 0 28px;width:28px;height:28px}
+.ap-label{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ap-label label{margin:0!important}
+.ap-count{font-size:11.5px;font-weight:800;color:var(--texto-suave);background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:20px;padding:1px 9px}
+.ap-box{border:1px solid var(--cinza-borda);border-radius:14px;background:var(--surface-2);padding:12px;display:flex;flex-direction:column;gap:12px}
+.ap-list{display:flex;flex-direction:column;gap:8px}
+.ap-list:empty{display:none}
+.ap-item{display:flex;align-items:flex-start;gap:11px;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:12px;padding:11px 12px;transition:border-color .15s}
+.ap-item:hover{border-color:var(--azul-300)}
+.ap-item.editing{border-color:var(--azul-300);box-shadow:0 0 0 3px var(--azul-50)}
+.ap-item .ap-ico{width:32px;height:32px;flex:0 0 32px;border-radius:9px;display:grid;place-items:center;background:var(--azul-50);color:var(--azul-300)}
+[data-theme="dark"] .ap-item .ap-ico{background:rgba(46,91,190,.2);color:#9cc0ff}
+.ap-item .ap-ico svg{width:16px;height:16px}
+.ap-item .ap-main{flex:1;min-width:0}
+.ap-item .ap-title{font-size:14px;font-weight:800;color:var(--texto);overflow-wrap:anywhere;line-height:1.3}
+.ap-item .ap-prev{font-size:12.5px;color:var(--texto-suave);line-height:1.45;margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.ap-item .ap-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.ap-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:7px;background:var(--azul-50);color:var(--azul)}
+[data-theme="dark"] .ap-chip{background:rgba(46,91,190,.2);color:#9cc0ff}
+.ap-item .ap-actions{display:flex;gap:6px;flex:0 0 auto}
+.ap-item .ap-actions .icon-btn{width:34px;height:34px}
+.ap-new{background:var(--cinza-card);border:1.5px dashed var(--cinza-borda);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:9px}
+.ap-new.editing{border-style:solid;border-color:var(--azul-300)}
+.ap-new-head{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;color:var(--texto);text-transform:uppercase;letter-spacing:.4px}
+.ap-cancel{margin-left:auto;border:none;background:none;color:var(--texto-suave);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0}
+.ap-cancel:hover{color:var(--vermelho)}
+.ap-new input,.ap-new textarea{width:100%}
+.ap-new textarea{min-height:96px;resize:vertical}
+.ap-tokens{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12px;color:var(--texto-suave);font-weight:600}
+.ap-tokens:empty{display:none}
+.ap-new-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ap-new-foot .ap-tip{font-size:12px;color:var(--texto-suave);margin-right:auto}
+.ap-new-foot .btn{flex:0 0 auto}
 .camp-checks{display:flex;flex-direction:column;gap:8px;background:var(--surface-2);border:1.5px solid var(--cinza-borda);border-radius:12px;padding:10px 12px;max-height:170px;overflow:auto}
 .camp-check{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;color:var(--texto);cursor:pointer}
 .camp-check input{width:17px;height:17px;accent-color:var(--azul);flex:0 0 17px}
@@ -886,7 +910,6 @@ body.review-on{overflow:hidden}
   .topbar{padding:13px 16px}
   .field-row{grid-template-columns:1fr}
   .topbar-actions .label-hide{display:none}
-  .agent-prompt-add{grid-template-columns:1fr}
 }
 .scrim{display:none;position:fixed;inset:0;background:rgba(7,18,40,.4);z-index:25}
 .scrim.show{display:block}
@@ -2113,14 +2136,16 @@ body.reconnect-on{overflow:hidden}
         <textarea id="f-obs" placeholder="Instruções de uso, cuidados, contexto…"></textarea>
       </div>
       <div class="field">
-        <label>Prompts do agente</label>
-        <div class="agent-prompt-box">
-          <div class="agent-prompt-add">
-            <input type="text" id="f-prompt-title" placeholder="Título do prompt" />
-            <textarea id="f-prompt-text" placeholder="Modelo do prompt. Ex.: Crie uma legenda sobre {{Tema}} com tom {{Tom}}."></textarea>
-            <button class="btn btn-dark btn-sm" id="f-add-prompt" type="button">Adicionar</button>
+        <div class="ap-label"><label>Prompts do agente</label><span class="ap-count" id="f-prompt-count"></span></div>
+        <div class="ap-box">
+          <div class="ap-list" id="f-prompt-list" data-draft-list></div>
+          <div class="ap-new" id="f-prompt-form">
+            <div class="ap-new-head"><span id="f-prompt-mode">＋ Novo prompt</span><button type="button" class="ap-cancel" id="f-prompt-cancel" hidden>Cancelar edição</button></div>
+            <input type="text" id="f-prompt-title" placeholder="Título do prompt (ex.: Legenda de feed)" />
+            <textarea id="f-prompt-text" placeholder="Escreva o modelo do prompt. Use {{Nome do campo}} para criar campos a preencher. Ex.: Crie uma legenda sobre {{Tema}} com tom {{Tom}}."></textarea>
+            <div class="ap-tokens" id="f-prompt-tokens"></div>
+            <div class="ap-new-foot"><span class="ap-tip">Ctrl + Enter também adiciona</span><button class="btn btn-dark btn-sm" id="f-add-prompt" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg><span id="f-add-prompt-txt">Adicionar prompt</span></button></div>
           </div>
-          <div class="agent-prompt-list" id="f-prompt-list" data-draft-list></div>
         </div>
       </div>
       <div class="field">
@@ -6000,29 +6025,54 @@ function promptDataFromText(titulo,texto,existing){
     id:(existing&&existing.id)||id(),
     titulo:(titulo||'Prompt').trim(),
     texto:texto.trim(),
-    campos:tokens.map(t=>({nome:t,tipo:(old.get(t)||{}).tipo||'texto',opcoes:(old.get(t)||{}).opcoes||[]}))
+    // mantém tipo, opções e a explicação (ícone ?) dos campos que continuam no modelo
+    campos:tokens.map(t=>{const o=old.get(t)||{};return {nome:t,tipo:o.tipo||'texto',opcoes:o.opcoes||[],ajuda:o.ajuda||''};})
   };
+}
+let fpEditId=null; // prompt em edição no formulário do agente
+function renderPromptTokens(){
+  const toks=parseTokens($('#f-prompt-text').value);
+  $('#f-prompt-tokens').innerHTML=toks.length?'Campos detectados: '+toks.map(t=>`<span class="ap-chip">${esc(t)}</span>`).join(''):'';
+}
+function resetPromptForm(){
+  fpEditId=null;$('#f-prompt-title').value='';$('#f-prompt-text').value='';
+  $('#f-prompt-mode').textContent='＋ Novo prompt';$('#f-add-prompt-txt').textContent='Adicionar prompt';
+  $('#f-prompt-cancel').hidden=true;$('#f-prompt-form').classList.remove('editing');renderPromptTokens();
 }
 function renderAgentModalPrompts(){
   const list=$('#f-prompt-list');if(!list)return;
-  list.innerHTML=agentModalPrompts.length?agentModalPrompts.map(p=>`<div class="agent-prompt-item">
-    <div><b>${esc(p.titulo||'Prompt')}</b><span>${esc(p.texto||'')}</span></div>
-    <button class="icon-btn danger" data-fpdel="${p.id}" title="Remover prompt">${RM_SVG}</button>
-  </div>`).join(''):'<p class="hint" style="margin:0">Nenhum prompt adicionado neste agente.</p>';
+  const n=agentModalPrompts.length;$('#f-prompt-count').textContent=n?`${n} prompt${n>1?'s':''}`:'nenhum';
+  list.innerHTML=agentModalPrompts.map(p=>{
+    const toks=parseTokens(p.texto);
+    return `<div class="ap-item${p.id===fpEditId?' editing':''}">
+      <span class="ap-ico">${PROMPT_ICO}</span>
+      <div class="ap-main"><div class="ap-title">${esc(p.titulo||'Prompt')}</div><div class="ap-prev">${esc(p.texto||'')}</div>
+        ${toks.length?`<div class="ap-chips"><span class="ap-chip">${toks.length} campo${toks.length>1?'s':''}</span></div>`:''}</div>
+      <div class="ap-actions"><button type="button" class="icon-btn" data-fpedit="${p.id}" title="Editar prompt">${EDIT_SVG}</button><button type="button" class="icon-btn danger" data-fpdel="${p.id}" title="Remover prompt">${RM_SVG}</button></div>
+    </div>`;}).join('');
+  $$('#f-prompt-list [data-fpedit]').forEach(b=>b.addEventListener('click',()=>{
+    const p=agentModalPrompts.find(x=>x.id===b.dataset.fpedit);if(!p)return;
+    fpEditId=p.id;$('#f-prompt-title').value=p.titulo||'';$('#f-prompt-text').value=p.texto||'';
+    $('#f-prompt-mode').textContent='✏️ Editando: '+(p.titulo||'Prompt');$('#f-add-prompt-txt').textContent='Salvar alterações';
+    $('#f-prompt-cancel').hidden=false;$('#f-prompt-form').classList.add('editing');renderPromptTokens();renderAgentModalPrompts();
+    $('#f-prompt-form').scrollIntoView({behavior:'smooth',block:'nearest'});setTimeout(()=>$('#f-prompt-text').focus(),150);
+  }));
   $$('#f-prompt-list [data-fpdel]').forEach(b=>b.addEventListener('click',()=>{
     const p=agentModalPrompts.find(x=>x.id===b.dataset.fpdel);
     if(!p)return;
-    openConfirmDelete(p.titulo||'Prompt',()=>{agentModalPrompts=agentModalPrompts.filter(x=>x.id!==b.dataset.fpdel);renderAgentModalPrompts();toast('Prompt removido.','warn');},'Excluir prompt');
+    openConfirmDelete(p.titulo||'Prompt',()=>{agentModalPrompts=agentModalPrompts.filter(x=>x.id!==b.dataset.fpdel);if(fpEditId===b.dataset.fpdel)resetPromptForm();renderAgentModalPrompts();toast('Prompt removido.','warn');},'Excluir prompt');
   }));
 }
 function addAgentModalPrompt(){
   const titulo=$('#f-prompt-title').value.trim()||'Prompt';
   const texto=$('#f-prompt-text').value.trim();
   if(!texto){toast('Escreva o modelo do prompt.','warn');$('#f-prompt-text').focus();return;}
-  agentModalPrompts.push(promptDataFromText(titulo,texto));
-  $('#f-prompt-title').value='';$('#f-prompt-text').value='';
-  renderAgentModalPrompts();
-  toast('Prompt adicionado ao agente.','ok');
+  if(fpEditId){
+    const i=agentModalPrompts.findIndex(x=>x.id===fpEditId);
+    if(i>=0)agentModalPrompts[i]=promptDataFromText(titulo,texto,agentModalPrompts[i]);
+    toast('Prompt atualizado.','ok');
+  }else{agentModalPrompts.push(promptDataFromText(titulo,texto));toast('Prompt adicionado ao agente.','ok');}
+  resetPromptForm();renderAgentModalPrompts();
 }
 window.openAgentModal=function(a,campanhaId){
   // popula selects a partir das configurações
@@ -6043,7 +6093,7 @@ window.openAgentModal=function(a,campanhaId){
   $('#f-tags').value=a?(a.tags||[]).join(', '):'';
   $('#f-obs').value=a?(a.obs||''):'';
   agentModalPrompts=(a&&a.prompts?JSON.parse(JSON.stringify(a.prompts)):[]).map(p=>promptDataFromText(p.titulo||'Prompt',p.texto||'',p));
-  $('#f-prompt-title').value='';$('#f-prompt-text').value='';renderAgentModalPrompts();
+  resetPromptForm();renderAgentModalPrompts();
   const cr=$('#f-created');if(a&&a.createdAt){cr.style.display='';cr.innerHTML='🗓️ Criado em '+fmtDate(a.createdAt);}else cr.style.display='none';
   selEmoji=a?(a.icone||EMOJIS[0]):EMOJIS[0];buildEmojiPick();
   resetIaPanel('iaAgent');
@@ -6071,6 +6121,8 @@ $('#saveAgent').addEventListener('click',()=>{
 });
 $('#f-add-prompt').addEventListener('click',addAgentModalPrompt);
 $('#f-prompt-text').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')addAgentModalPrompt();});
+$('#f-prompt-text').addEventListener('input',renderPromptTokens);
+$('#f-prompt-cancel').addEventListener('click',()=>{resetPromptForm();renderAgentModalPrompts();});
 
 /* ============ MODAL CAMPANHA ============ */
 let selColor=CAMP_COLORS[0];
