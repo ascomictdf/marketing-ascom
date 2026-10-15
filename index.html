@@ -1137,6 +1137,19 @@ body.readonly .fv-node .fn-status{pointer-events:none}
 .cfg-item .user-actions .rm{margin:0}
 .user-meta{display:block;font-size:11.5px;color:var(--texto-suave);font-weight:600;margin-top:2px;overflow-wrap:anywhere}
 
+/* ===== AVISO DE RASCUNHO ===== */
+.draft-overlay{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(7,18,40,.5)}
+.draft-overlay.show{display:flex;animation:fadeIn .15s ease}
+.draft-box{background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:20px;box-shadow:var(--sombra-forte);padding:26px 26px 22px;max-width:420px;width:100%;text-align:center;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1)}
+.draft-ico{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;background:color-mix(in srgb,#F59E0B 18%,transparent);color:#d97706}
+.draft-ico svg{width:26px;height:26px}
+.draft-box h3{font-size:18px;font-weight:800;color:var(--texto);margin-bottom:8px}
+.draft-box p{font-size:14px;line-height:1.55;color:var(--texto-suave)}
+.draft-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.draft-actions .btn{flex:1;min-width:150px;justify-content:center}
+#draftDiscard{color:var(--vermelho);border-color:color-mix(in srgb,var(--vermelho) 45%,var(--cinza-borda))}
+#draftDiscard:hover{background:var(--vermelho);color:#fff;border-color:var(--vermelho)}
+
 /* ===== RECONEXÃO ===== */
 .reconnect-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(7,18,40,.38);backdrop-filter:blur(12px) saturate(.8);-webkit-backdrop-filter:blur(12px) saturate(.8)}
 .reconnect-overlay.show{display:flex;animation:fadeIn .3s ease}
@@ -1923,7 +1936,7 @@ body.reconnect-on{overflow:hidden}
           <section class="doc-sec" id="doc-changelog">
             <h3>17. Histórico de versões</h3>
             <ul class="doc-log">
-              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
+              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
               <li><b>v2.4 — 24/08/2026</b><br><b>Tarefas e agentes mais flexíveis</b>: a tela de tarefas ganhou cards compactos, descrição somente no modal, criação/ordenação/renomeação/exclusão de colunas direto no quadro, além da lista agrupada por etapa. O cadastro de agentes agora permite adicionar prompts na criação, e os cards exibem atalhos para abrir o chat e os prompts quando existirem. A aprovação pública não exige login no link compartilhado. A integração Gemini/Gerar com IA foi retirada da interface.</li>
               <li><b>v2.3 — 27/06/2026</b><br><b>Contatos — setor e pastas</b>: o cadastro de contato ganhou o campo <b>Setor</b> (com sugestões dos setores já usados) e a opção de organizar os contatos em <b>pastas</b> — com filtro por pasta no topo e um gerenciador para criar, renomear e remover pastas.</li>
               <li><b>v2.2 — 27/06/2026</b><br><b>Lista de contatos</b>: nova seção para cadastrar contatos (nome, celular e observações), com busca e atalho para o WhatsApp. <b>Aprovação — quem revisou</b>: ao aprovar ou solicitar alteração pelo link, a pessoa informa o nome, que aparece no cartão da arte como "Revisado por: [nome]". <b>Link de aprovação</b>: a lista "Artes neste link" ficou mais alta, facilitando a seleção.</li>
@@ -2036,7 +2049,7 @@ body.reconnect-on{overflow:hidden}
             <textarea id="f-prompt-text" placeholder="Modelo do prompt. Ex.: Crie uma legenda sobre {{Tema}} com tom {{Tom}}."></textarea>
             <button class="btn btn-dark btn-sm" id="f-add-prompt" type="button">Adicionar</button>
           </div>
-          <div class="agent-prompt-list" id="f-prompt-list"></div>
+          <div class="agent-prompt-list" id="f-prompt-list" data-draft-list></div>
         </div>
       </div>
       <div class="field">
@@ -2575,6 +2588,19 @@ body.reconnect-on{overflow:hidden}
     <div class="modal-foot">
       <button class="btn btn-ghost" data-opclose>Cancelar</button>
       <button class="btn btn-primary" id="opConfirm" style="display:none">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- AVISO DE RASCUNHO (fechar formulário sem salvar) -->
+<div class="draft-overlay" id="draftModal" role="alertdialog" aria-modal="true" aria-labelledby="draftTitle" aria-describedby="draftMsg" aria-hidden="true">
+  <div class="draft-box">
+    <div class="draft-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+    <h3 id="draftTitle">Descartar rascunho?</h3>
+    <p id="draftMsg">Você preencheu informações que ainda não foram salvas. Se fechar agora, o rascunho será excluído.</p>
+    <div class="draft-actions">
+      <button class="btn btn-ghost" id="draftDiscard" type="button">Descartar rascunho</button>
+      <button class="btn btn-primary" id="draftKeep" type="button">Continuar editando</button>
     </div>
   </div>
 </div>
@@ -6183,10 +6209,80 @@ $$('.drawer-tab').forEach(tb=>tb.addEventListener('click',()=>{
   setDrawerTab(tb.dataset.dtab);
 }));
 
+/* ============ PROTEÇÃO DE RASCUNHO ============
+   Ao abrir um formulário, guarda uma "foto" dos campos. Se a pessoa tentar fechar (X, Cancelar,
+   clique fora ou Esc) com algo diferente da foto, pergunta antes de descartar. Salvar fecha normalmente. */
+const DRAFT_MODALS=['agentModal','campModal','promptModal','postModal','tarefaModal','fluxoModal','contatoModal','userModal','pwModal'];
+const DRAFT_CLOSE_SEL='[data-close],[data-pclose],[data-postclose],[data-tarclose],[data-fluxclose],[data-contatoclose],[data-userclose],[data-pwclose]';
+const draftSnaps={};
+let draftBypass=false, draftPending=null, draftReturnFocus=null;
+function draftSnapshot(m){
+  const parts=[];
+  m.querySelectorAll('input,textarea,select').forEach(el=>{
+    if(el.type==='file'||el.closest('.ia-slot,.ia-panel'))return;
+    parts.push((el.id||el.name||'')+'='+(el.type==='checkbox'||el.type==='radio'?el.checked:el.value));
+  });
+  m.querySelectorAll('.modal-body .sel').forEach(el=>parts.push('sel:'+(el.dataset.emoji||el.dataset.color||el.textContent)));
+  m.querySelectorAll('[data-draft-list]').forEach(el=>parts.push('list:'+el.textContent));
+  return parts.join('\u0001');
+}
+function draftOpenModals(){return DRAFT_MODALS.map(i=>document.getElementById(i)).filter(m=>m&&m.classList.contains('open'));}
+function draftIsDirty(m){return draftSnaps[m.id]!=null&&draftSnapshot(m)!==draftSnaps[m.id];}
+function draftEditing(m){const h=m.querySelector('input[type=hidden]');return !h||!!h.value;}
+function draftAsk(m,onDiscard){
+  const editing=draftEditing(m);
+  $('#draftTitle').textContent=editing?'Descartar alterações?':'Descartar rascunho?';
+  $('#draftMsg').textContent=editing?'As alterações que você fez ainda não foram salvas. Se fechar agora, elas serão perdidas.':'Você preencheu informações que ainda não foram salvas. Se fechar agora, o rascunho será excluído.';
+  $('#draftDiscard').textContent=editing?'Descartar alterações':'Descartar rascunho';
+  draftPending=onDiscard;draftReturnFocus=document.activeElement;
+  const ov=$('#draftModal');ov.classList.add('show');ov.setAttribute('aria-hidden','false');
+  setTimeout(()=>$('#draftKeep').focus(),30);
+}
+function draftHide(){const ov=$('#draftModal');ov.classList.remove('show');ov.setAttribute('aria-hidden','true');}
+function draftKeep(){draftPending=null;draftHide();try{draftReturnFocus&&draftReturnFocus.focus();}catch(e){}}
+function draftDiscard(){const fn=draftPending;draftPending=null;draftHide();if(fn){draftBypass=true;try{fn();}finally{draftBypass=false;}}}
+function bindDraftGuard(){
+  // "foto" dos campos logo depois que o formulário é aberto e preenchido
+  DRAFT_MODALS.forEach(idm=>{
+    const m=document.getElementById(idm);if(!m)return;
+    new MutationObserver(()=>{
+      if(m.classList.contains('open')){if(draftSnaps[idm]==null)setTimeout(()=>{draftSnaps[idm]=draftSnapshot(m);},60);}
+      else draftSnaps[idm]=null;
+    }).observe(m,{attributes:true,attributeFilter:['class']});
+  });
+  // X, Cancelar e clique fora da janela
+  window.addEventListener('click',e=>{
+    if(draftBypass)return;
+    if(e.target.closest&&e.target.closest('#draftModal'))return;
+    for(const m of draftOpenModals()){
+      const btn=e.target.closest&&e.target.closest(DRAFT_CLOSE_SEL);
+      if(((btn&&m.contains(btn))||e.target===m)&&draftIsDirty(m)){
+        e.preventDefault();e.stopImmediatePropagation();
+        const alvo=e.target;
+        draftAsk(m,()=>alvo.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true})));
+        return;
+      }
+    }
+  },true);
+  // Esc
+  window.addEventListener('keydown',e=>{
+    if(e.key!=='Escape'||draftBypass)return;
+    if($('#draftModal').classList.contains('show')){e.preventDefault();e.stopImmediatePropagation();draftKeep();return;}
+    const sujo=draftOpenModals().find(draftIsDirty);
+    if(sujo){e.preventDefault();e.stopImmediatePropagation();draftAsk(sujo,()=>document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})));}
+  },true);
+  $('#draftKeep').addEventListener('click',draftKeep);
+  $('#draftDiscard').addEventListener('click',draftDiscard);
+  $('#draftModal').addEventListener('click',e=>{if(e.target.id==='draftModal')draftKeep();});
+  // fechar/recarregar a aba com formulário alterado
+  window.addEventListener('beforeunload',e=>{if(draftOpenModals().some(draftIsDirty)){e.preventDefault();e.returnValue='';}});
+}
+
 /* ============ TRIGGERS ============ */
 bindPlatformLogin();
 bindReconnect();
 bindFluxoViewer();
+bindDraftGuard();
 $('#addBtn').addEventListener('click',()=>openAgentModal());
 $('#heroAdd').addEventListener('click',()=>openAgentModal());
 bindAuthUI();
