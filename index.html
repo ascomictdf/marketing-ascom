@@ -6,8 +6,9 @@
 <title>Hub de Agentes IA · Marketing ICTDF</title>
 <link rel="icon" id="appFavicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23fff'/%3E%3Cpath fill='%232E5BBE' d='M44 12C36 30 24 36 24 56a20 20 0 0 0 40 0C64 38 54 30 44 12Z'/%3E%3Cpath fill='%23E52521' d='M62 26C56 40 46 44 46 58a16 16 0 0 0 32 0C78 45 70 38 62 26Z'/%3E%3Cpath fill='%23F2682C' d='M62 46c-3 7-7 9-7 15a7 7 0 0 0 14 0c0-6-4-9-7-15Z'/%3E%3C/svg%3E" />
 <script>
-  // aplica o tema o quanto antes para evitar "flash"
-  try{var t=localStorage.getItem('ictdf_hub_theme');if(t==='escuro')document.documentElement.setAttribute('data-theme','dark');}catch(e){}
+  // aplica o tema o quanto antes para evitar "flash" — escuro é o padrão; claro só se a pessoa escolheu
+  (function(){var t=null;try{t=localStorage.getItem('ictdf_hub_theme');}catch(e){}
+  if(t!=='claro')document.documentElement.setAttribute('data-theme','dark');})();
   document.documentElement.classList.add('platform-locked');
 </script>
 <style>
@@ -410,7 +411,7 @@ select.chip{padding-right:30px;cursor:pointer}
 .empty p{font-size:14.5px;margin-bottom:18px}
 
 /* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(7,18,40,.55);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto}
+.overlay{position:fixed;inset:0;background:rgba(7,18,40,.66);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto}
 .overlay.open{display:flex;animation:fadeIn .25s ease}
 #confirmModal{z-index:140}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -442,7 +443,7 @@ select.chip{padding-right:30px;cursor:pointer}
 .color-pick input[type=color]{width:44px;height:34px;border:1.5px solid var(--cinza-borda);border-radius:10px;background:var(--cinza-card);cursor:pointer;padding:2px}
 
 /* DRAWER (detalhe do agente) */
-.drawer-overlay{position:fixed;inset:0;background:rgba(7,18,40,.5);backdrop-filter:blur(4px);display:none;z-index:90}
+.drawer-overlay{position:fixed;inset:0;background:rgba(7,18,40,.6);display:none;z-index:90}
 .drawer-overlay.open{display:block;animation:fadeIn .25s}
 .drawer{position:fixed;top:0;right:0;height:100vh;width:500px;max-width:96vw;background:var(--cinza-card);box-shadow:var(--sombra-forte);transform:translateX(100%);transition:.35s cubic-bezier(.22,1,.36,1);z-index:95;display:flex;flex-direction:column}
 .drawer.open{transform:none}
@@ -819,7 +820,7 @@ a.open-btn{text-decoration:none}
 #reviewApp{display:none;position:fixed;inset:0;z-index:500;background:var(--cinza-bg);overflow-y:auto}
 #reviewApp.on{display:block}
 body.review-on{overflow:hidden}
-.review-head{position:sticky;top:0;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--cinza-borda);padding:16px 24px;display:flex;align-items:center;gap:14px;z-index:2}
+.review-head{position:sticky;top:0;background:var(--topbar-bg);border-bottom:1px solid var(--cinza-borda);padding:16px 24px;display:flex;align-items:center;gap:14px;z-index:2}
 .review-brand{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
 .review-brand .rb-logo{width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:var(--sombra)}
 .review-brand .rb-logo img{width:100%;height:100%;object-fit:cover}
@@ -1012,8 +1013,14 @@ body.review-on{overflow:hidden}
 .intg-log .lg .t{color:var(--texto-suave);font-size:11px;white-space:nowrap}
 
 /* ===== DESEMPENHO ===== */
-/* seções longas fora da tela só são desenhadas quando aparecem */
+/* Sem desfoque (backdrop-filter) atrás de janelas: medido, ele derrubava a tela de 60 para ~14 quadros/s
+   enquanto qualquer janela estava aberta. A única exceção é a tela de reconexão (rara e estática). */
+/* Itens fora da tela só são desenhados quando aparecem (listas grandes abrem bem mais rápido) */
 .doc-sec{content-visibility:auto;contain-intrinsic-size:auto 400px}
+.kcard{content-visibility:auto;contain-intrinsic-size:auto 110px}
+.trow,.post-row,.up-row,.fx-row{content-visibility:auto;contain-intrinsic-size:auto 76px}
+.grid>.card{content-visibility:auto;contain-intrinsic-size:auto 260px}
+.contato-card{content-visibility:auto;contain-intrinsic-size:auto 150px}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
 /* ===== ENQUADRAMENTO: nada de conteúdo cortado nos cartões ===== */
@@ -1058,7 +1065,7 @@ body.review-on{overflow:hidden}
 }
 
 /* ===== FLUXOS: fluxograma (arrastar + zoom) ===== */
-.fv-overlay{position:fixed;inset:0;z-index:96;display:none;background:rgba(7,18,40,.55);backdrop-filter:blur(6px);padding:24px}
+.fv-overlay{position:fixed;inset:0;z-index:96;display:none;background:rgba(7,18,40,.7);padding:24px}
 .fv-overlay.open{display:flex;animation:fadeIn .2s ease}
 body.fv-on{overflow:hidden}
 .fv-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:22px;box-shadow:var(--sombra-forte);overflow:hidden;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1)}
@@ -1072,8 +1079,10 @@ body.fv-on{overflow:hidden}
 .fv-close svg{width:18px;height:18px}
 .fv-progress{height:5px;background:var(--surface-2)}
 .fv-progress .fill{height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width .4s}
-.fv-canvas{position:relative;flex:1;min-height:0;overflow:hidden;cursor:grab;touch-action:none;outline:none;user-select:none;-webkit-user-select:none;
-  background-color:var(--cinza-bg);background-image:radial-gradient(circle,color-mix(in srgb,var(--texto-suave) 28%,transparent) 1.2px,transparent 1.3px);background-size:24px 24px}
+.fv-canvas{position:relative;flex:1;min-height:0;overflow:hidden;cursor:grab;touch-action:none;outline:none;user-select:none;-webkit-user-select:none;background-color:var(--cinza-bg)}
+/* pontilhado numa camada própria: no arrasto ela só desliza (transform), sem ser redesenhada */
+.fv-grid{position:absolute;left:-80px;top:-80px;right:-80px;bottom:-80px;pointer-events:none;will-change:transform;
+  background-image:radial-gradient(circle,color-mix(in srgb,var(--texto-suave) 28%,transparent) 1.2px,transparent 1.3px);background-size:24px 24px}
 .fv-canvas.panning{cursor:grabbing}
 .fv-canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--azul-300)}
 .fv-stage{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;align-items:center;padding:40px;will-change:transform}
@@ -1936,7 +1945,7 @@ body.reconnect-on{overflow:hidden}
           <section class="doc-sec" id="doc-changelog">
             <h3>17. Histórico de versões</h3>
             <ul class="doc-log">
-              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
+              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Tema escuro como padrão</b> (o ícone de sol/lua no topo alterna e a escolha fica salva no navegador). <b>Desempenho</b>: janelas sem efeito de desfoque (que derrubava a tela para ~14 quadros/s), listas grandes desenham só o que está visível, datas formatadas com cache e fluxograma com arrasto mais leve. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
               <li><b>v2.4 — 24/08/2026</b><br><b>Tarefas e agentes mais flexíveis</b>: a tela de tarefas ganhou cards compactos, descrição somente no modal, criação/ordenação/renomeação/exclusão de colunas direto no quadro, além da lista agrupada por etapa. O cadastro de agentes agora permite adicionar prompts na criação, e os cards exibem atalhos para abrir o chat e os prompts quando existirem. A aprovação pública não exige login no link compartilhado. A integração Gemini/Gerar com IA foi retirada da interface.</li>
               <li><b>v2.3 — 27/06/2026</b><br><b>Contatos — setor e pastas</b>: o cadastro de contato ganhou o campo <b>Setor</b> (com sugestões dos setores já usados) e a opção de organizar os contatos em <b>pastas</b> — com filtro por pasta no topo e um gerenciador para criar, renomear e remover pastas.</li>
               <li><b>v2.2 — 27/06/2026</b><br><b>Lista de contatos</b>: nova seção para cadastrar contatos (nome, celular e observações), com busca e atalho para o WhatsApp. <b>Aprovação — quem revisou</b>: ao aprovar ou solicitar alteração pelo link, a pessoa informa o nome, que aparece no cartão da arte como "Revisado por: [nome]". <b>Link de aprovação</b>: a lista "Artes neste link" ficou mais alta, facilitando a seleção.</li>
@@ -2338,6 +2347,7 @@ body.reconnect-on{overflow:hidden}
     </div>
     <div class="fv-progress"><div class="fill" id="fvFill"></div></div>
     <div class="fv-canvas" id="fvCanvas" tabindex="0" aria-label="Fluxograma — arraste para mover, use a roda do mouse para aproximar">
+      <div class="fv-grid" id="fvGrid" aria-hidden="true"></div>
       <div class="fv-stage" id="fvStage"></div>
       <div class="fv-legend">
         <span><i style="background:#94A3B8"></i>Pendente</span>
@@ -3018,7 +3028,10 @@ function notifyAprovDecision(p){
   addNotif({tipo:p.aprov,titulo:p.titulo,msg:aprovado?('Arte aprovada'+quem):('Alteração solicitada'+quem+(p.aprovComentario?': '+p.aprovComentario:''))});
   toast((aprovado?'✅ Aprovada: ':'✏️ Alteração: ')+p.titulo,aprovado?'ok':'warn');
 }
-function notifTime(ts){try{return new Date(ts).toLocaleString('pt-BR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+// Formatadores de data reaproveitados (criar um a cada chamada custava ~0,1 ms por data — 30 ms numa lista de 300 tarefas)
+const _dtfCache={};
+function dtf(opts){const k=JSON.stringify(opts);return _dtfCache[k]||(_dtfCache[k]=new Intl.DateTimeFormat('pt-BR',opts));}
+function notifTime(ts){try{return dtf({day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(ts));}catch(e){return '';}}
 function renderNotifs(){
   const u=notifs.filter(n=>!n.read).length, c=$('#notifCount');
   if(c){c.textContent=u>9?'9+':u;c.style.display=u?'grid':'none';}
@@ -3259,7 +3272,7 @@ const $=(s,c=document)=>c.querySelector(s);
 const $$=(s,c=document)=>[...c.querySelectorAll(s)];
 function esc(s){return (s==null?'':''+s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function safeUrl(u){u=(u||'').trim();if(!u)return '#';if(!/^https?:\/\//i.test(u))u='https://'+u;return u}
-function fmtDate(iso){try{return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}catch(e){return ''}}
+function fmtDate(iso){try{return dtf({day:'2-digit',month:'short',year:'numeric'}).format(new Date(iso))}catch(e){return ''}}
 function fmtSize(b){if(!b)return '';if(b<1024)return b+' B';if(b<1048576)return (b/1024).toFixed(0)+' KB';return (b/1048576).toFixed(1)+' MB';}
 function statusLabel(s){return {ativo:'Ativo',treino:'Em treino',inativo:'Inativo'}[s]||s}
 function toISODate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -3294,7 +3307,7 @@ function tarefaMatchesQuery(t,q){
   if(!q)return true;
   return [t.titulo,t.desc,t.responsavel,t.prioridade,tarStatusNome(t.status),t.campanhaId?campNome(t.campanhaId):'Sem campanha'].join(' ').toLowerCase().includes(q);
 }
-function monShort(iso){try{return new Date(iso+'T00:00:00').toLocaleDateString('pt-BR',{month:'short'}).replace('.','');}catch(e){return ''}}
+function monShort(iso){try{return dtf({month:'short'}).format(new Date(iso+'T00:00:00')).replace('.','');}catch(e){return ''}}
 function postStatusColor(s){return {planejado:'#2E5BBE',produzido:'#F59E0B',publicado:'#16A34A'}[s]||'#94A3B8'}
 function postStatusLabel(s){return {planejado:'Planejado',produzido:'Produzido',publicado:'Publicado'}[s]||s}
 function tipos(){return (state.config&&state.config.tipos)||[]}
@@ -3396,10 +3409,10 @@ function applyTheme(t){
   else{document.documentElement.removeAttribute('data-theme');
     $('#themeIcon').innerHTML='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';}
 }
-function currentTheme(){return localStorage.getItem(THEME_KEY)==='escuro'?'escuro':'claro'}
+function currentTheme(){let t=null;try{t=localStorage.getItem(THEME_KEY);}catch(e){}return t==='claro'?'claro':'escuro';} // padrão: escuro
 $('#themeToggle').addEventListener('click',()=>{
   const next=currentTheme()==='escuro'?'claro':'escuro';
-  localStorage.setItem(THEME_KEY,next);applyTheme(next);
+  try{localStorage.setItem(THEME_KEY,next);}catch(e){}applyTheme(next);
   toast(next==='escuro'?'Tema escuro ativado.':'Tema claro ativado.','info');
 });
 
@@ -3768,7 +3781,7 @@ function renderAgendaView(c){
   const groups={};visible.forEach(p=>{(groups[p.data]=groups[p.data]||[]).push(p)});
   $('#campCalendar').innerHTML=Object.keys(groups).sort().map(date=>{
     const isToday=date===today, isPast=date<today;
-    let rest='';try{rest=new Date(date+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'short',month:'short',year:'numeric'});}catch(e){rest=date;}
+    let rest='';try{rest=dtf({weekday:'short',month:'short',year:'numeric'}).format(new Date(date+'T00:00:00'));}catch(e){rest=date;}
     return `<div class="agenda-group">
       <div class="agenda-date ${isToday?'today':''} ${isPast&&!isToday?'past':''}"><span class="ad-day">${date.slice(8,10)}</span><span class="ad-rest">${rest}${isToday?' · Hoje':''}</span></div>
       <div class="agenda-posts">${groups[date].map(p=>postRowHTML(p)).join('')}</div>
@@ -3789,7 +3802,7 @@ function renderMonthView(c){
     cells+=`<div class="cal-cell ${iso===today?'today':''}" data-addday="${iso}"><div class="cal-day">${d}</div>${chips}</div>`;
   }
   const dows=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const monthName=new Date(y,m,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const monthName=dtf({month:'long',year:'numeric'}).format(new Date(y,m,1));
   $('#campCalendar').innerHTML=`
     <div class="cal-nav"><button class="nav-arrow" id="calPrev">‹</button><h3>${monthName}</h3><button class="nav-arrow" id="calNext">›</button><div style="flex:1"></div><button class="btn btn-ghost btn-sm" id="calToday">Hoje</button></div>
     <div class="cal-grid-head">${dows.map(d=>`<div>${d}</div>`).join('')}</div>
@@ -3800,7 +3813,7 @@ function renderMonthView(c){
   $$('#campCalendar [data-addday]').forEach(cell=>cell.addEventListener('click',e=>{if(e.target.closest('[data-postopen]'))return;openPostModal(c.id,null,cell.dataset.addday);}));
   $$('#campCalendar [data-postopen]').forEach(ch=>ch.addEventListener('click',e=>{e.stopPropagation();openPostModal(c.id,(c.posts||[]).find(p=>p.id===ch.dataset.postopen));}));
 }
-function fmtShort(iso){try{return new Date(iso+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}).replace('.','');}catch(e){return iso;}}
+function fmtShort(iso){try{return dtf({day:'2-digit',month:'short'}).format(new Date(iso+'T00:00:00')).replace('.','');}catch(e){return iso;}}
 
 /* ============ CALENDÁRIO EDITORIAL GERAL ============ */
 function gcalEntries(){
@@ -3850,7 +3863,7 @@ function renderGeralAgenda(entries){
   const today=toISODate(new Date());
   el.innerHTML=Object.keys(groups).sort().map(date=>{
     const isToday=date===today,isPast=date<today;
-    let rest='';try{rest=new Date(date+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'short',month:'short',year:'numeric'});}catch(e){rest=date;}
+    let rest='';try{rest=dtf({weekday:'short',month:'short',year:'numeric'}).format(new Date(date+'T00:00:00'));}catch(e){rest=date;}
     return `<div class="agenda-group"><div class="agenda-date ${isToday?'today':''} ${isPast&&!isToday?'past':''}"><span class="ad-day">${date.slice(8,10)}</span><span class="ad-rest">${rest}${isToday?' · Hoje':''}</span></div><div class="agenda-posts">${groups[date].map(x=>postRowHTML(x.p,x.campId)).join('')}</div></div>`;
   }).join('');
 }
@@ -3867,7 +3880,7 @@ function renderGeralMonth(entries){
     cells+=`<div class="cal-cell ${iso===today?'today':''}" data-gaddday="${iso}"><div class="cal-day">${d}</div>${chips}</div>`;
   }
   const dows=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const monthName=new Date(y,m,1).toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const monthName=dtf({month:'long',year:'numeric'}).format(new Date(y,m,1));
   $('#geralCalendar').innerHTML=`<div class="cal-nav"><button class="nav-arrow" id="gcalPrev">‹</button><h3>${monthName}</h3><button class="nav-arrow" id="gcalNext">›</button><div style="flex:1"></div><button class="btn btn-ghost btn-sm" id="gcalToday">Hoje</button></div><div class="cal-grid-head">${dows.map(d=>`<div>${d}</div>`).join('')}</div><div class="cal-grid">${cells}</div>`;
   $('#gcalPrev').addEventListener('click',()=>{gcalMonth=new Date(y,m-1,1);renderGeralCalendar();});
   $('#gcalNext').addEventListener('click',()=>{gcalMonth=new Date(y,m+1,1);renderGeralCalendar();});
@@ -4232,7 +4245,7 @@ function tarTempos(t){
 }
 function noPrazo(t){if(!t.prazo||!t.completedAt)return null;return Date.parse(t.completedAt)<=Date.parse(t.prazo+'T23:59:59');}
 function fmtDurShort(ms){if(ms==null)return '—';const m=Math.round(ms/60000);if(m<1)return '<1min';if(m<60)return m+'min';const h=m/60;if(h<24)return (Math.round(h*10)/10)+'h';return (Math.round(h/24*10)/10)+'d';}
-function dtFull(iso){try{return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch(e){return '—';}}
+function dtFull(iso){try{return dtf({day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(iso));}catch(e){return '—';}}
 function prodInPeriod(refIso){if(prodPeriodo==='todos')return true;if(!refIso)return false;return Date.parse(refIso)>=Date.now()-(+prodPeriodo)*86400000;}
 function prodTasks(){
   return (state.tarefas||[]).filter(t=>{
@@ -4276,7 +4289,7 @@ function throughput(tasks,days){
   const out=[],today=new Date();today.setHours(0,0,0,0);
   for(let i=days-1;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);const key=toISODate(d);
     const cnt=tasks.filter(t=>t.completedAt&&toISODate(new Date(t.completedAt))===key).length;
-    out.push({label:d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),value:cnt,display:cnt+' concluída(s)'});}
+    out.push({label:dtf({day:'2-digit',month:'2-digit'}).format(d),value:cnt,display:cnt+' concluída(s)'});}
   return out;
 }
 
@@ -4805,11 +4818,17 @@ function deleteFluxo(prId){
 
 /* ---- Fluxograma: arrastar para mover, zoom (roda, botões, pinça) ---- */
 const fv={prId:null,x:0,y:0,k:1,pointers:new Map(),pinch:null,drag:null};
-function fvApply(){
+// Mouse/toque disparam muitos eventos por quadro: aplica no máximo uma vez por quadro de tela.
+let _fvRaf=0;
+function fvApply(){if(!_fvRaf)_fvRaf=requestAnimationFrame(()=>{_fvRaf=0;fvApplyNow();});}
+function fvApplyNow(){
   const st=$('#fvStage'), cv=$('#fvCanvas');if(!st)return;
   st.style.transform=`translate(${fv.x}px,${fv.y}px) scale(${fv.k})`;
-  const g=24*fv.k;cv.style.backgroundSize=`${g}px ${g}px`;cv.style.backgroundPosition=`${fv.x}px ${fv.y}px`;
-  $('#fvZoomPct').textContent=Math.round(fv.k*100)+'%';
+  const g=24*fv.k, grid=$('#fvGrid');
+  if(fv._g!==g){fv._g=g;grid.style.backgroundSize=`${g}px ${g}px`;} // redesenha o pontilhado só quando o zoom muda
+  const ox=((fv.x%g)+g)%g, oy=((fv.y%g)+g)%g;
+  grid.style.transform=`translate(${ox}px,${oy}px)`;
+  const pct=Math.round(fv.k*100)+'%', z=$('#fvZoomPct');if(z.textContent!==pct)z.textContent=pct;
 }
 function fvZoomAt(k,px,py){
   const cv=$('#fvCanvas');const r=cv.getBoundingClientRect();
@@ -5018,7 +5037,7 @@ function aprovCardHTML(x){
   </div>`;
 }
 /* ---- histórico de aprovação (somente acréscimo; o servidor impede edição) ---- */
-function fmtDateTime(iso){try{const d=new Date(iso);if(isNaN(d))return '';return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}}
+function fmtDateTime(iso){try{const d=new Date(iso);if(isNaN(d))return '';return dtf({day:'2-digit',month:'2-digit',year:'numeric'}).format(d)+' às '+dtf({hour:'2-digit',minute:'2-digit'}).format(d);}catch(e){return '';}}
 function aprovHistory(p){return (Array.isArray(p&&p.aprovHistorico)?p.aprovHistorico:[]).slice().sort((a,b)=>(a.ts||'').localeCompare(b.ts||''));}
 function lastChangeRequest(p){const h=aprovHistory(p).filter(e=>e.status==='alteracao'&&e.comentario);return h[h.length-1]||null;}
 function currentAuthorName(){const u=window.__platformUser||{};return Operator.nome||u.name||u.email||'Equipe';}
