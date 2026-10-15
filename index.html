@@ -1167,6 +1167,48 @@ body.readonly .fv-node .fn-status{pointer-events:none}
 .cfg-item .user-actions .rm{margin:0}
 .user-meta{display:block;font-size:11.5px;color:var(--texto-suave);font-weight:600;margin-top:2px;overflow-wrap:anywhere}
 
+/* ===== PROMPTS DO AGENTE (aba Prompts) ===== */
+.pr-card{background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:16px;margin-bottom:14px;overflow:hidden;animation:cardIn .3s ease both}
+.pr-head{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--cinza-borda);background:var(--cinza-card)}
+.pr-ico{width:36px;height:36px;flex:0 0 36px;border-radius:10px;display:grid;place-items:center;background:var(--azul-50);color:var(--azul-300)}
+[data-theme="dark"] .pr-ico{background:rgba(46,91,190,.2);color:#9cc0ff}
+.pr-ico svg{width:18px;height:18px}
+.pr-titles{flex:1;min-width:0}
+.pr-titles h4{font-size:15px;font-weight:800;color:var(--texto);overflow-wrap:anywhere;line-height:1.3}
+.pr-titles .pr-meta{font-size:12px;color:var(--texto-suave);font-weight:600;margin-top:2px}
+.pr-head .pr-actions{display:flex;gap:6px;flex:0 0 auto}
+.pr-body,.pr-body.gen-form{padding:16px;margin:0;border-top:0}
+.pr-fields{display:flex;flex-direction:column;gap:14px}
+.gen-field{margin:0;position:relative}
+.gf-label{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.gf-label label{font-size:13px;font-weight:700;color:var(--texto);margin:0;overflow-wrap:anywhere}
+.gf-help{width:20px;height:20px;flex:0 0 20px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--texto-suave) 70%,transparent);background:transparent;color:var(--texto-suave);font-family:inherit;font-size:11.5px;font-weight:800;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0;transition:.15s}
+.gf-help:hover,.gf-help[aria-expanded="true"]{border-color:var(--azul-300);color:var(--azul-300)}
+.gf-help.has{background:var(--azul-300);border-color:var(--azul-300);color:#fff}
+.gf-help.has:hover,.gf-help.has[aria-expanded="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+.gf-help:focus-visible{outline:3px solid var(--azul-300);outline-offset:2px}
+.gf-pop{position:relative;margin:0 0 9px;background:var(--cinza-card);border:1px solid var(--azul-300);border-radius:12px;padding:11px 13px;box-shadow:var(--sombra);font-size:13px;line-height:1.55;color:var(--texto);animation:fadeUp .15s ease both}
+.gf-pop::before{content:"";position:absolute;top:-6px;left:var(--arrow,60px);width:10px;height:10px;background:var(--cinza-card);border-left:1px solid var(--azul-300);border-top:1px solid var(--azul-300);transform:rotate(45deg)}
+.gf-pop .gf-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.gf-pop .gf-empty{color:var(--texto-suave)}
+.gf-pop .gf-pop-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.gf-pop textarea{width:100%;min-height:72px;padding:9px 11px;border:1.5px solid var(--cinza-borda);border-radius:10px;font-family:inherit;font-size:13px;background:var(--surface-2);color:var(--texto);outline:none;resize:vertical}
+.gf-pop textarea:focus{border-color:var(--azul-300)}
+.pr-body .gen-field input,.pr-body .gen-field textarea,.pr-body .gen-field select{padding:11px 13px;font-size:14px;border-radius:11px;background:var(--cinza-card)}
+.pr-body .gen-field input:focus,.pr-body .gen-field textarea:focus,.pr-body .gen-field select:focus{box-shadow:0 0 0 3px var(--azul-50)}
+.pr-body .gen-actions{margin-top:16px;padding-top:14px;border-top:1px dashed var(--cinza-borda)}
+.pr-body .gen-out{margin-top:12px}
+.pr-body .ptext{margin:0}
+body.readonly .gf-edit{display:none!important}
+/* editor do prompt: configuração de cada campo */
+.cc-card{background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:12px;padding:11px 12px;margin-bottom:10px}
+.cc-card .cc-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cc-card .cc-tok{font-weight:800;font-size:13.5px;color:var(--texto);flex:1;min-width:120px;overflow-wrap:anywhere}
+.cc-card select,.cc-card input,.cc-card textarea{padding:8px 10px;border:1.5px solid var(--cinza-borda);border-radius:9px;font-size:12.5px;font-family:inherit;background:var(--cinza-card);color:var(--texto);outline:none}
+.cc-card .cc-opts{width:100%;margin-top:8px}
+.cc-card .cc-help{width:100%;margin-top:8px;min-height:54px;resize:vertical;font-size:13px}
+.cc-card .cc-help-label{display:block;font-size:11.5px;font-weight:700;color:var(--texto-suave);margin-top:9px}
+
 /* ===== AVISO DE RASCUNHO ===== */
 .draft-overlay{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(7,18,40,.5)}
 .draft-overlay.show{display:flex;animation:fadeIn .15s ease}
@@ -1793,7 +1835,7 @@ body.reconnect-on{overflow:hidden}
             <p>Cada agente é um chatbot treinado para uma demanda. Campos: nome, descrição, link do chatbot, tipo de demanda (interno/externo), área, campanhas vinculadas, responsável, status (ativo/treino/inativo), tags, ícone e anotações.</p>
             <ul>
               <li><b>Detalhe (drawer):</b> clique no card para abrir. Abas <b>Sobre</b>, <b>Prompts</b> e <b>Links</b>.</li>
-              <li><b>Prompts / geradores:</b> escreva um modelo com campos entre <code>{{ }}</code> (ex.: <code>{{Tema}}</code>). Na hora de usar, preencha os campos e gere o texto pronto para copiar.</li>
+              <li><b>Prompts / geradores:</b> escreva um modelo com campos entre <code>{{ }}</code> (ex.: <code>{{Tema}}</code>). Na hora de usar, preencha os campos e gere o texto pronto para copiar. Cada campo tem um ícone <b>?</b> com a explicação de como preenchê-lo — escreva-a no editor do prompt ("Explicação do campo") ou direto pelo <b>?</b>; o ícone fica azul quando há explicação.</li>
               <li><b>Links:</b> adicione links de referência. Arquivos devem ficar fora da plataforma, por exemplo no Drive, para reduzir o uso do banco de dados.</li>
               <li><b>Subagentes / links:</b> na aba Sobre é possível cadastrar vários chatbots/links secundários no mesmo agente (ex.: versão Claude, gerador de hashtags).</li>
               <li><b>Pastas por área:</b> na tela de agentes, cada área vira uma pasta clicável com contador. Use "Nova pasta" para criar uma nova área e depois vincule agentes a ela no cadastro/edição.</li>
@@ -1966,7 +2008,7 @@ body.reconnect-on{overflow:hidden}
           <section class="doc-sec" id="doc-changelog">
             <h3>17. Histórico de versões</h3>
             <ul class="doc-log">
-              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Tema escuro como padrão</b> (o ícone de sol/lua no topo alterna e a escolha fica salva no navegador). <b>Desempenho</b>: janelas sem efeito de desfoque (que derrubava a tela para ~14 quadros/s), listas grandes desenham só o que está visível, datas formatadas com cache e fluxograma com arrasto mais leve. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
+              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Prompts dos agentes</b>: cartões redesenhados; cada campo mostra só o nome (ex.: "Número da edição") com um ícone <b>?</b> que abre a explicação de como preenchê-lo — escrita no editor do prompt ou direto pelo ?. <b>Tema escuro como padrão</b> (o ícone de sol/lua no topo alterna e a escolha fica salva no navegador). <b>Desempenho</b>: janelas sem efeito de desfoque (que derrubava a tela para ~14 quadros/s), listas grandes desenham só o que está visível, datas formatadas com cache e fluxograma com arrasto mais leve. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
               <li><b>v2.4 — 24/08/2026</b><br><b>Tarefas e agentes mais flexíveis</b>: a tela de tarefas ganhou cards compactos, descrição somente no modal, criação/ordenação/renomeação/exclusão de colunas direto no quadro, além da lista agrupada por etapa. O cadastro de agentes agora permite adicionar prompts na criação, e os cards exibem atalhos para abrir o chat e os prompts quando existirem. A aprovação pública não exige login no link compartilhado. A integração Gemini/Gerar com IA foi retirada da interface.</li>
               <li><b>v2.3 — 27/06/2026</b><br><b>Contatos — setor e pastas</b>: o cadastro de contato ganhou o campo <b>Setor</b> (com sugestões dos setores já usados) e a opção de organizar os contatos em <b>pastas</b> — com filtro por pasta no topo e um gerenciador para criar, renomear e remover pastas.</li>
               <li><b>v2.2 — 27/06/2026</b><br><b>Lista de contatos</b>: nova seção para cadastrar contatos (nome, celular e observações), com busca e atalho para o WhatsApp. <b>Aprovação — quem revisou</b>: ao aprovar ou solicitar alteração pelo link, a pessoa informa o nome, que aparece no cartão da arte como "Revisado por: [nome]". <b>Link de aprovação</b>: a lista "Artes neste link" ficou mais alta, facilitando a seleção.</li>
@@ -2158,7 +2200,7 @@ body.reconnect-on{overflow:hidden}
       <div class="field">
         <label>Modelo do prompt <span class="req">*</span></label>
         <textarea id="pm-texto" style="min-height:130px" placeholder="Escreva o prompt e crie campos com chaves duplas. Ex.: Crie um post sobre {{Tema}} na cor {{Cor}} com tom {{Tom}}."></textarea>
-        <div class="hint">Use <b>{{Nome do campo}}</b> para criar um campo a preencher. Ex.: <code>{{Cor}}</code>, <code>{{Tema}}</code>.</div>
+        <div class="hint">Use <b>{{Nome do campo}}</b> para criar um campo a preencher. Ex.: <code>{{Cor}}</code>, <code>{{Tema}}</code>. Abaixo, escolha o tipo de cada campo e escreva uma explicação de como preenchê-lo.</div>
       </div>
       <div class="field">
         <label>Campos detectados</label>
@@ -5759,29 +5801,33 @@ function renderDtabSobre(a){
 }
 function copyText(t){navigator.clipboard?.writeText(t).then(()=>toast('Copiado!','ok')).catch(()=>toast('Não foi possível copiar.','warn'));}
 const EDIT_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+const PROMPT_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2M9 20h6M12 4v16"/></svg>';
 function renderDtabPrompts(a){
   const items=(a.prompts||[]).map(p=>{
     const tokens=parseTokens(p.texto);
-    const head=`<div class="li-head"><h4>${esc(p.titulo||'Prompt')}</h4>
-      <button class="ico-mini" data-pedit="${p.id}" title="Editar">${EDIT_SVG}</button>
-      <button class="ico-mini danger" data-pdel="${p.id}" title="Excluir">${RM_SVG}</button></div>`;
+    const head=`<div class="pr-head"><span class="pr-ico">${PROMPT_ICO}</span>
+      <div class="pr-titles"><h4>${esc(p.titulo||'Prompt')}</h4><div class="pr-meta">${tokens.length?`${tokens.length} campo${tokens.length>1?'s':''} para preencher`:'Prompt pronto para copiar'}</div></div>
+      <div class="pr-actions"><button class="icon-btn" data-pedit="${p.id}" title="Editar prompt">${EDIT_SVG}</button><button class="icon-btn danger" data-pdel="${p.id}" title="Excluir prompt">${RM_SVG}</button></div></div>`;
     if(!tokens.length){
-      return `<div class="list-item" data-genitem="${p.id}">${head}<div class="ptext">${esc(p.texto||'')}</div>
-        <div class="gen-actions"><button class="btn btn-primary btn-sm" data-genai="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>Gerar com IA</button><button class="btn btn-dark btn-sm" data-copyraw="${p.id}">Copiar</button></div>
-        <div class="gen-out" id="out-${p.id}"></div></div>`;
+      return `<div class="pr-card" data-genitem="${p.id}">${head}<div class="pr-body"><div class="ptext">${esc(p.texto||'')}</div>
+        <div class="gen-actions"><button class="btn btn-primary btn-sm" data-genai="${p.id}">Gerar com IA</button><button class="btn btn-dark btn-sm" data-copyraw="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Copiar prompt</button></div>
+        <div class="gen-out" id="out-${p.id}"></div></div></div>`;
     }
-    const fields=tokens.map(tok=>{
-      const c=campoCfg(p,tok);let input;
-      if(c.tipo==='paragrafo')input=`<textarea data-tok="${esc(tok)}" placeholder="${esc(tok)}"></textarea>`;
-      else if(c.tipo==='select')input=`<select data-tok="${esc(tok)}"><option value="">— selecione —</option>${(c.opcoes||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select>`;
-      else input=`<input type="text" data-tok="${esc(tok)}" placeholder="${esc(tok)}" />`;
-      return `<div class="gen-field"><label>Campo <b>{{${esc(tok)}}}</b></label>${input}</div>`;
+    const fields=tokens.map((tok,i)=>{
+      const c=campoCfg(p,tok), fid=`gf-${p.id}-${i}`, ajuda=(c.ajuda||'').trim();let input;
+      if(c.tipo==='paragrafo')input=`<textarea id="${fid}" data-tok="${esc(tok)}" placeholder="${esc(tok)}"></textarea>`;
+      else if(c.tipo==='select')input=`<select id="${fid}" data-tok="${esc(tok)}"><option value="">— selecione —</option>${(c.opcoes||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select>`;
+      else input=`<input type="text" id="${fid}" data-tok="${esc(tok)}" placeholder="${esc(tok)}" />`;
+      return `<div class="gen-field" data-gf="${esc(tok)}">
+        <div class="gf-label"><label for="${fid}">${esc(tok)}</label><button type="button" class="gf-help${ajuda?' has':''}" data-gfhelp aria-expanded="false" aria-controls="${fid}-pop" title="${ajuda?'Como preencher este campo':'Sem explicação ainda — clique para adicionar'}" aria-label="Explicação do campo ${esc(tok)}">?</button></div>
+        <div class="gf-pop" id="${fid}-pop" hidden></div>
+        ${input}</div>`;
     }).join('');
-    return `<div class="list-item" data-genitem="${p.id}">${head}
-      <div class="gen-form">${fields}
+    return `<div class="pr-card" data-genitem="${p.id}">${head}
+      <div class="pr-body gen-form"><div class="pr-fields">${fields}</div>
         <div class="gen-actions">
-          <button class="btn btn-primary btn-sm" data-genai="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>Gerar com IA</button>
-          <button class="btn btn-ghost btn-sm" data-gen="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m13 2-3 7h6l-3 7"/></svg>Só o prompt</button>
+          <button class="btn btn-primary btn-sm" data-genai="${p.id}">Gerar com IA</button>
+          <button class="btn btn-primary btn-sm" data-gen="${p.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m13 2-3 7h6l-3 7"/></svg>Gerar prompt preenchido</button>
           <button class="btn btn-ghost btn-sm" data-showtpl="${p.id}">Ver modelo</button>
         </div>
         <div class="gen-out" id="out-${p.id}"></div>
@@ -5790,6 +5836,7 @@ function renderDtabPrompts(a){
   $('#dtab-prompts').innerHTML=(items||'<p class="hint" style="margin-bottom:14px">Nenhum prompt ainda. Crie um <b>gerador</b>: escreva um modelo com campos entre {{}} e preencha na hora de usar o agente.</p>')+
     `<button class="btn btn-dark" id="np-add" style="margin-top:6px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Novo prompt / gerador</button>`;
   $('#np-add').addEventListener('click',()=>openPromptModal(a));
+  bindPromptHelp(a);
   $$('#dtab-prompts [data-pedit]').forEach(b=>b.addEventListener('click',()=>openPromptModal(a,(a.prompts||[]).find(x=>x.id===b.dataset.pedit))));
   $$('#dtab-prompts [data-pdel]').forEach(b=>b.addEventListener('click',()=>{const p=(a.prompts||[]).find(x=>x.id===b.dataset.pdel);if(!p)return;openConfirmDelete(p.titulo||'Prompt',()=>{a.prompts=a.prompts.filter(x=>x.id!==b.dataset.pdel);save();renderDrawer();renderAgents();if(view==='campanha')renderCampanhaDetail();toast('Prompt removido.','warn');},'Excluir prompt');}));
   $$('#dtab-prompts [data-copyraw]').forEach(b=>b.addEventListener('click',()=>copyText((a.prompts.find(x=>x.id===b.dataset.copyraw)||{}).texto)));
@@ -5820,6 +5867,41 @@ function renderDtabPrompts(a){
     finally{b.disabled=false;}
   }));
 }
+// "?" de cada campo: mostra a explicação; editores podem escrevê-la ali mesmo (fica salva no prompt)
+function closeAllGfPops(except){$$('#dtab-prompts .gf-pop').forEach(pop=>{if(pop!==except){pop.hidden=true;const b=pop.parentElement.querySelector('[data-gfhelp]');if(b)b.setAttribute('aria-expanded','false');}});}
+function bindPromptHelp(a){
+  $$('#dtab-prompts [data-gfhelp]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const field=btn.closest('[data-gf]'), card=btn.closest('[data-genitem]'), pop=field.querySelector('.gf-pop');
+    const p=(a.prompts||[]).find(x=>x.id===card.dataset.genitem), tok=field.dataset.gf;if(!p)return;
+    if(!pop.hidden){pop.hidden=true;btn.setAttribute('aria-expanded','false');return;}
+    closeAllGfPops(pop);
+    const show=()=>{
+      const ajuda=(campoCfg(p,tok).ajuda||'').trim();
+      pop.innerHTML=(ajuda?`<div class="gf-text">${esc(ajuda)}</div>`:`<div class="gf-empty">Ainda não há explicação para este campo.</div>`)+
+        `<div class="gf-pop-actions"><button type="button" class="btn btn-ghost btn-sm gf-edit">${EDIT_SVG}${ajuda?'Editar explicação':'Escrever explicação'}</button></div>`;
+      pop.querySelector('.gf-edit').addEventListener('click',edit);
+    };
+    const edit=()=>{
+      pop.innerHTML=`<textarea placeholder="Explique o que deve ser preenchido aqui. Ex.: número da edição do boletim, só o número (ex.: 42).">${esc(campoCfg(p,tok).ajuda||'')}</textarea>
+        <div class="gf-pop-actions"><button type="button" class="btn btn-primary btn-sm gf-save">Salvar explicação</button><button type="button" class="btn btn-ghost btn-sm gf-cancel">Cancelar</button></div>`;
+      const ta=pop.querySelector('textarea');ta.focus();
+      pop.querySelector('.gf-cancel').addEventListener('click',show);
+      pop.querySelector('.gf-save').addEventListener('click',()=>{
+        p.campos=p.campos||[];let c=p.campos.find(x=>x.nome===tok);
+        if(!c){c={nome:tok,tipo:'texto',opcoes:[]};p.campos.push(c);}
+        c.ajuda=ta.value.trim();save();
+        btn.classList.toggle('has',!!c.ajuda);btn.title=c.ajuda?'Como preencher este campo':'Sem explicação ainda — clique para adicionar';
+        show();toast('Explicação salva!','ok');
+      });
+    };
+    show();
+    pop.style.setProperty('--arrow',(btn.offsetLeft+3)+'px');
+    pop.hidden=false;btn.setAttribute('aria-expanded','true');
+  }));
+}
+document.addEventListener('click',e=>{if(!e.target.closest('.gf-pop,[data-gfhelp]'))closeAllGfPops();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.querySelector('#dtab-prompts .gf-pop:not([hidden])')){closeAllGfPops();e.stopPropagation();}},true);
 function renderDtabArquivos(a){
   const list=(a.arquivos||[]).map(f=>{
     const href=safeUrl(f.url);
@@ -6055,18 +6137,20 @@ function pmRender(){
   const tokens=parseTokens($('#pm-texto').value);const box=$('#pm-campos');
   if(!tokens.length){box.innerHTML='<p class="hint" style="margin:0">Escreva tokens com {{}} acima para configurar os campos aqui.</p>';return;}
   box.innerHTML=tokens.map(tok=>{
-    const c=pmCampos[tok]||{tipo:'texto',opcoes:[]};
-    return `<div class="cc-row" data-cc="${esc(tok)}">
-      <span class="cc-tok">{{${esc(tok)}}}</span>
-      <select class="cc-tipo"><option value="texto"${c.tipo==='texto'?' selected':''}>Texto curto</option><option value="paragrafo"${c.tipo==='paragrafo'?' selected':''}>Parágrafo</option><option value="select"${c.tipo==='select'?' selected':''}>Lista de opções</option></select>
-      <input class="cc-opts" type="text" placeholder="opções, separadas por vírgula" value="${esc((c.opcoes||[]).join(', '))}" style="${c.tipo==='select'?'':'display:none'}" />
+    const c=pmCampos[tok]||{tipo:'texto',opcoes:[],ajuda:''};
+    return `<div class="cc-card" data-cc="${esc(tok)}">
+      <div class="cc-top"><span class="cc-tok">${esc(tok)}</span>
+      <select class="cc-tipo" aria-label="Tipo do campo ${esc(tok)}"><option value="texto"${c.tipo==='texto'?' selected':''}>Texto curto</option><option value="paragrafo"${c.tipo==='paragrafo'?' selected':''}>Parágrafo</option><option value="select"${c.tipo==='select'?' selected':''}>Lista de opções</option></select></div>
+      <input class="cc-opts" type="text" placeholder="Opções, separadas por vírgula" value="${esc((c.opcoes||[]).join(', '))}" style="${c.tipo==='select'?'':'display:none'}" />
+      <label class="cc-help-label">❔ Explicação do campo (aparece no ícone "?")</label>
+      <textarea class="cc-help" placeholder="Ex.: informe só o número da edição do boletim (ex.: 42).">${esc(c.ajuda||'')}</textarea>
     </div>`;
   }).join('');
-  $$('#pm-campos .cc-row').forEach(row=>{
-    const tok=row.dataset.cc, tipoSel=row.querySelector('.cc-tipo'), opts=row.querySelector('.cc-opts');
-    if(!pmCampos[tok])pmCampos[tok]={tipo:tipoSel.value,opcoes:[]};
-    function sync(){pmCampos[tok]={tipo:tipoSel.value,opcoes:opts.value.split(',').map(s=>s.trim()).filter(Boolean)};opts.style.display=tipoSel.value==='select'?'':'none';}
-    tipoSel.addEventListener('change',sync);opts.addEventListener('input',sync);
+  $$('#pm-campos .cc-card').forEach(row=>{
+    const tok=row.dataset.cc, tipoSel=row.querySelector('.cc-tipo'), opts=row.querySelector('.cc-opts'), help=row.querySelector('.cc-help');
+    if(!pmCampos[tok])pmCampos[tok]={tipo:tipoSel.value,opcoes:[],ajuda:''};
+    function sync(){pmCampos[tok]={tipo:tipoSel.value,opcoes:opts.value.split(',').map(s=>s.trim()).filter(Boolean),ajuda:help.value.trim()};opts.style.display=tipoSel.value==='select'?'':'none';}
+    tipoSel.addEventListener('change',sync);opts.addEventListener('input',sync);help.addEventListener('input',sync);
   });
 }
 window.openPromptModal=function(agent,p){
@@ -6075,7 +6159,7 @@ window.openPromptModal=function(agent,p){
   $('#pm-id').value=p?p.id:'';
   $('#pm-titulo').value=p?(p.titulo||''):'';
   $('#pm-texto').value=p?(p.texto||''):'';
-  pmCampos={};if(p&&p.campos)p.campos.forEach(c=>{pmCampos[c.nome]={tipo:c.tipo||'texto',opcoes:c.opcoes||[]};});
+  pmCampos={};if(p&&p.campos)p.campos.forEach(c=>{pmCampos[c.nome]={tipo:c.tipo||'texto',opcoes:c.opcoes||[],ajuda:c.ajuda||''};});
   pmRender();$('#promptModal').classList.add('open');setTimeout(()=>$('#pm-titulo').focus(),100);
 };
 function closePromptModal(){$('#promptModal').classList.remove('open');}
@@ -6084,7 +6168,7 @@ $('#savePrompt').addEventListener('click',()=>{
   const texto=$('#pm-texto').value.trim();
   if(!texto){toast('Escreva o modelo do prompt.','warn');$('#pm-texto').focus();return;}
   const tokens=parseTokens(texto);
-  const campos=tokens.map(t=>({nome:t,tipo:(pmCampos[t]||{}).tipo||'texto',opcoes:(pmCampos[t]||{}).opcoes||[]}));
+  const campos=tokens.map(t=>({nome:t,tipo:(pmCampos[t]||{}).tipo||'texto',opcoes:(pmCampos[t]||{}).opcoes||[],ajuda:(pmCampos[t]||{}).ajuda||''}));
   const data={titulo:$('#pm-titulo').value.trim()||'Prompt',texto,campos};
   const a=promptAgentRef;if(!a)return;
   const eid=$('#pm-id').value;
