@@ -8,7 +8,7 @@ process.env.ADMIN_EMAIL = 'ascom@ictdf.org.br';
 process.env.ADMIN_PASSWORD = 'ascomictdf';
 process.env.APP_URL = 'https://hub.exemplo.org';
 
-const memory = { users: [], state: null };
+const memory = { users: [], state: null, version: 0 };
 
 async function ensureDb() {
   if (!memory.users.some(u => u.email === process.env.ADMIN_EMAIL)) {
@@ -97,12 +97,16 @@ async function db(strings, ...values) {
     memory.users = memory.users.filter(u => u.email !== email);
     return [];
   }
-  if (q.startsWith('select data from app_state')) {
-    return memory.state ? [{ data: memory.state }] : [];
+  if (q.startsWith('select updated_at::text as version from app_state')) {
+    return memory.state ? [{ version: 'v' + memory.version }] : [];
+  }
+  if (q.startsWith('select data')) {
+    return memory.state ? [{ data: JSON.parse(JSON.stringify(memory.state)), version: 'v' + memory.version }] : [];
   }
   if (q.startsWith('insert into app_state')) {
     memory.state = JSON.parse(values[0]);
-    return [];
+    memory.version += 1;
+    return [{ version: 'v' + memory.version }];
   }
   return [];
 }
@@ -168,6 +172,15 @@ async function call(handler, method, body, cookie) {
 
   const loaded = await call(state, 'GET', null, adminCookie);
   assert.equal(loaded.payload.data.agents[0].nome, 'Agente Teste', 'estado salvo deve ser lido do banco');
+  assert.ok(loaded.payload.version, 'leitura devolve a versao do estado');
+  assert.equal(saved.payload.version, loaded.payload.version, 'gravacao devolve a mesma versao');
+  const sameReq = { method: 'GET', headers: { cookie: adminCookie }, query: { since: loaded.payload.version } };
+  const same = res(); await state(sameReq, same);
+  assert.equal(same.payload.unchanged, true, 'sincronizacao sem mudancas nao baixa o estado inteiro');
+  assert.equal(same.payload.data, undefined);
+  const staleReq = { method: 'GET', headers: { cookie: adminCookie }, query: { since: 'v-antiga' } };
+  const stale = res(); await state(staleReq, stale);
+  assert.ok(stale.payload.data, 'versao diferente baixa o estado completo');
 
   await call(state, 'PUT', { data: { agents: [], campanhas: [{ id: 'c1', posts: [{ id: 'p1', titulo: 'Arte Teste', aprov: 'pendente' }] }], posts: [] } }, adminCookie);
   const publicReview = await call(review, 'POST', { postId: 'p1', status: 'aprovado', revisor: 'Diretoria' });

@@ -31,7 +31,7 @@
   --cinza-borda:#e2e8f3;
   --texto:#13233b;
   --texto-suave:#5b6b82;
-  --topbar-bg:rgba(244,247,251,.82);
+  --topbar-bg:rgba(244,247,251,.97);
   --sombra:0 10px 30px -12px rgba(16,44,104,.25);
   --sombra-forte:0 24px 60px -20px rgba(16,44,104,.45);
   --radius:18px;
@@ -46,7 +46,7 @@
   --cinza-borda:#27324c;
   --texto:#e9eef8;
   --texto-suave:#9fb1cb;
-  --topbar-bg:rgba(11,19,34,.82);
+  --topbar-bg:rgba(11,19,34,.97);
   --sombra:0 10px 30px -12px rgba(0,0,0,.5);
   --sombra-forte:0 24px 60px -20px rgba(0,0,0,.7);
 }
@@ -113,7 +113,7 @@ html:not(.platform-locked) .platform-login{display:none}
   display:flex;flex-direction:column;gap:5px;z-index:30;overflow-y:auto;
 }
 .brand{display:flex;align-items:center;gap:13px;padding:4px 6px 20px;}
-.brand .logo{width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:0 8px 22px -6px rgba(0,0,0,.5);animation:pulse 3.5s ease-in-out infinite}
+.brand .logo{width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:0 8px 22px -6px rgba(0,0,0,.5)}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 .brand .logo svg{width:30px;height:30px}
 .brand .logo img{width:100%;height:100%;object-fit:cover;border-radius:14px}
@@ -149,7 +149,7 @@ html:not(.platform-locked) .platform-login{display:none}
 
 /* ===== MAIN / TOPBAR ===== */
 .main{display:flex;flex-direction:column;min-width:0}
-.topbar{position:sticky;top:0;z-index:20;background:var(--topbar-bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--cinza-borda);padding:14px 30px;display:flex;align-items:center;gap:14px}
+.topbar{position:sticky;top:0;z-index:20;background:var(--topbar-bg);border-bottom:1px solid var(--cinza-borda);padding:14px 30px;display:flex;align-items:center;gap:14px}
 .search{flex:1;max-width:440px;display:flex;align-items:center;gap:10px;background:var(--cinza-card);border:1.5px solid var(--cinza-borda);border-radius:14px;padding:11px 16px;transition:.2s}
 .search:focus-within{border-color:var(--azul-300);box-shadow:0 0 0 4px var(--azul-50)}
 .search svg{width:18px;height:18px;color:var(--texto-suave);flex:0 0 18px}
@@ -248,8 +248,8 @@ body.readonly .cfg-item .cfg-edit{display:inline-block!important;pointer-events:
 
 /* HERO */
 .hero{background:var(--grad);color:#fff;border-radius:26px;padding:36px 40px;position:relative;overflow:hidden;margin-bottom:26px;box-shadow:var(--sombra-forte)}
-.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(229,37,33,.5),transparent 65%);animation:float 8s ease-in-out infinite}
-.hero::before{content:"";position:absolute;left:-40px;bottom:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 65%);animation:float 10s ease-in-out infinite reverse}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;background:radial-gradient(circle,rgba(229,37,33,.5),transparent 65%)}
+.hero::before{content:"";position:absolute;left:-40px;bottom:-80px;width:280px;height:280px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 65%)}
 @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(-18px,14px)}}
 .hero-content{position:relative;z-index:2;max-width:640px}
 .hero h2{font-size:29px;font-weight:800;letter-spacing:-.6px;line-height:1.15}
@@ -1011,6 +1011,11 @@ body.review-on{overflow:hidden}
 .intg-log .lg{display:flex;gap:9px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--cinza-borda)}
 .intg-log .lg .t{color:var(--texto-suave);font-size:11px;white-space:nowrap}
 
+/* ===== DESEMPENHO ===== */
+/* seções longas fora da tela só são desenhadas quando aparecem */
+.doc-sec{content-visibility:auto;contain-intrinsic-size:auto 400px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
 /* ===== ENQUADRAMENTO: nada de conteúdo cortado nos cartões ===== */
 .card h3,.contato-card .ct-nome,.fluxo-head h3,.post-row .pr-title,.trow .tr-title,.review-card .rc-title,.list-item .li-head h4,.subag-item .sa-nome,.share-item .si-t,.up-title{overflow-wrap:anywhere}
 .card-foot{flex-wrap:wrap;row-gap:8px}
@@ -1758,7 +1763,7 @@ body.reconnect-on{overflow:hidden}
             <h3>5. Campanhas e identidade visual</h3>
             <p>Campanhas têm cor própria, período, status (em andamento/encerrada), responsável e agentes exclusivos. Ao abrir uma campanha você encontra:</p>
             <ul>
-              <li><b>Identidade visual:</b> envie a <b>logo</b> (até 1 MB) e monte a <b>paleta de cores</b> (adicionar por hex ou seletor, usar a cor da campanha, copiar com um clique, remover). Logo e cores aparecem no card da campanha e no cabeçalho.</li>
+              <li><b>Identidade visual:</b> envie a <b>logo</b> (reduzida automaticamente para não pesar a plataforma) e monte a <b>paleta de cores</b> (adicionar por hex ou seletor, usar a cor da campanha, copiar com um clique, remover). Logo e cores aparecem no card da campanha e no cabeçalho.</li>
               <li><b>Calendário editorial</b> da campanha (ver seção 6).</li>
               <li><b>Agentes da campanha:</b> agentes criados exclusivamente para ela.</li>
             </ul>
@@ -2809,12 +2814,14 @@ const DataBackend={
   _base(){return '/api/state';},
   _h(extra){return Object.assign({'Content-Type':'application/json'},extra||{});},
   async test(){const r=await fetch('/api/auth/me',{credentials:'include'});if(!r.ok)throw new Error('HTTP '+r.status);return true;},
+  version:'', // versão do estado no banco (updated_at); evita baixar tudo quando nada mudou
   async loadAll(initIfEmpty){
     if(this.connected()){
       const r=await fetch(this._base(),{headers:this._h(),credentials:'include'});
       if(r.status===401)throw new Error('UNAUTHORIZED');
       if(!r.ok)throw new Error('HTTP '+r.status+' — '+(await r.text()).slice(0,180));
       const payload=await r.json();
+      this.version=(payload&&payload.version)||'';
       if(payload&&payload.data)return payload.data;
       const inicial=this._localOrSeed();
       if(initIfEmpty){try{await this._remoteSave(inicial);}catch(e){}}
@@ -2822,10 +2829,22 @@ const DataBackend={
     }
     return this._localOrSeed();
   },
-  async _remoteSave(s){
-    const r=await fetch(this._base(),{method:'PUT',headers:this._h(),credentials:'include',body:JSON.stringify({data:s})});
+  // Sincronização periódica: devolve null se nada mudou desde a última leitura/gravação.
+  async poll(){
+    const r=await fetch(this._base()+(this.version?'?since='+encodeURIComponent(this.version):''),{headers:this._h(),credentials:'include',cache:'no-store'});
+    if(r.status===401)throw new Error('UNAUTHORIZED');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const payload=await r.json();
+    if(payload.unchanged)return null;
+    this.version=payload.version||'';
+    return payload.data||{};
+  },
+  async _remoteSave(s,json){
+    const r=await fetch(this._base(),{method:'PUT',headers:this._h(),credentials:'include',body:'{"data":'+(json||JSON.stringify(s))+'}'});
     if(r.status===401)throw new Error('UNAUTHORIZED');
     if(!r.ok)throw new Error('HTTP '+r.status+' — '+(await r.text()).slice(0,180));
+    const d=await r.json().catch(()=>({}));
+    if(d&&d.version)this.version=d.version;
   }
 };
 /* ============ AUTENTICAÇÃO DA PLATAFORMA (Vercel API) ============ */
@@ -2999,8 +3018,9 @@ async function pollCloud(){
   if(!DataBackend.connected())return;
   if(!REVIEW_MODE&&!Auth.loggedIn())return; // tela de login: nada a sincronizar
   try{
-    const remote=REVIEW_MODE?await loadReviewData():await DataBackend.loadAll(false);
+    const remote=REVIEW_MODE?await loadReviewData():await DataBackend.poll();
     setSync('ok');
+    if(!remote)return; // nada mudou no banco desde a última sincronização
     const flat=[];
     (remote.campanhas||[]).forEach(c=>(c.posts||[]).forEach(p=>flat.push({p,campId:c.id})));
     (remote.posts||[]).forEach(p=>flat.push({p,campId:''}));
@@ -3190,16 +3210,21 @@ function compactState(){
   state.tarefas=(state.tarefas||[]).map(t=>Object.assign(t,{log:(t.log||[]).slice(-30)}));
   state.integracaoLog=(state.integracaoLog||[]).slice(0,80);
 }
+// Cópia local (cache offline): gravada fora do caminho crítico, junto com o envio ao banco.
+function writeLocalCache(json){try{localStorage.setItem(STORE_KEY,json||JSON.stringify(state));}catch(e){console.error(e);}}
+let _localDirty=false;
+window.addEventListener('pagehide',()=>{if(_localDirty)writeLocalCache();});
 function save(){
   compactState();
-  try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){console.error(e);}
-  if(REVIEW_MODE)return;
-  if(!DataBackend.connected())return;
-  if(readonly())return; // somente leitura: não envia à nuvem (precisa entrar para editar)
-  setSync('saving');_pendingSave=true;
+  _localDirty=true;
+  const remote=!REVIEW_MODE&&DataBackend.connected()&&!readonly(); // somente leitura: não envia à nuvem
+  if(remote){setSync('saving');_pendingSave=true;}
   clearTimeout(_remoteTimer);
   _remoteTimer=setTimeout(()=>{
-    DataBackend._remoteSave(state).then(()=>{_pendingSave=false;setSync('ok');}).catch(err=>{console.error(err);const sessao=err&&err.message==='UNAUTHORIZED';setSync('erro',sessao?'sessao':'');if(sessao)toast('Sessão expirada. Entre novamente para salvar.','warn');else toast('Falha ao salvar no banco (dados guardados localmente).','warn');});
+    const json=JSON.stringify(state); // serializa uma vez só: cache local + envio
+    writeLocalCache(json);_localDirty=false;
+    if(!remote)return;
+    DataBackend._remoteSave(state,json).then(()=>{_pendingSave=false;setSync('ok');}).catch(err=>{console.error(err);const sessao=err&&err.message==='UNAUTHORIZED';setSync('erro',sessao?'sessao':'');if(sessao)toast('Sessão expirada. Entre novamente para salvar.','warn');else toast('Falha ao salvar no banco (dados guardados localmente).','warn');});
   },700);
 }
 
@@ -3566,7 +3591,7 @@ function renderCampBrand(){
     : `<div class="brand-logo-box brand-logo-empty" id="brandLogoDrop">
          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
          <span>Clique para enviar a logo</span></div>
-       <p class="hint" style="margin-top:10px">PNG, JPG ou SVG, até 1&nbsp;MB. Fica salva neste navegador.</p>`;
+       <p class="hint" style="margin-top:10px">PNG, JPG ou SVG. A imagem é otimizada automaticamente.</p>`;
   const swatches=paleta.map((col,i)=>`<div class="brand-sw" data-copyhex="${esc(col)}" title="Copiar ${esc(col)}">
       <div class="col" style="background:${esc(col)}"></div>
       <div class="hex">${esc((col||'').toUpperCase())}</div>
@@ -3611,36 +3636,47 @@ function renderCampBrand(){
   }));
   $$('#campBrand [data-copyhex]').forEach(s=>s.addEventListener('click',()=>copyText(s.dataset.copyhex)));
 }
-// upload da logo (lê como dataURL)
+/* ---- imagens: ficam dentro dos dados (que vão e voltam do banco), então são reduzidas antes de salvar ---- */
+const LOGO_MAX_PX=480, FAVICON_MAX_PX=64, IMG_BIG_CHARS=120*1024;
+function readAsDataURL(file){return new Promise((ok,fail)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=fail;r.readAsDataURL(file);});}
+function loadImage(src){return new Promise((ok,fail)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=fail;i.src=src;});}
+// Reduz para no máx. maxPx de lado e salva em WebP (mantém transparência). SVG/ICO ficam como estão.
+async function shrinkDataURL(dataUrl,maxPx){
+  if(!/^data:image\/(png|jpe?g|webp|gif|bmp)/i.test(dataUrl||''))return dataUrl;
+  const img=await loadImage(dataUrl);
+  const k=Math.min(1,maxPx/Math.max(img.naturalWidth||1,img.naturalHeight||1));
+  const w=Math.max(1,Math.round(img.naturalWidth*k)), h=Math.max(1,Math.round(img.naturalHeight*k));
+  const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+  let out=c.toDataURL('image/webp',0.86);
+  if(!/^data:image\/webp/.test(out))out=c.toDataURL('image/png'); // navegador sem WebP
+  return out.length<dataUrl.length?out:dataUrl;
+}
+async function pickImage(e,maxPx,maxBytes,onDone){
+  const file=e.target.files[0];e.target.value='';if(!file)return;
+  if(!/^image\//.test(file.type)&&!/\.ico$/i.test(file.name)){toast('Selecione um arquivo de imagem.','warn');return;}
+  if(file.size>maxBytes){toast('Imagem muito grande (máx. '+fmtSize(maxBytes)+').','warn');return;}
+  try{onDone(await shrinkDataURL(await readAsDataURL(file),maxPx));}
+  catch(err){console.error(err);toast('Não foi possível ler a imagem.','warn');}
+}
 $('#brandLogoInput').addEventListener('change',e=>{
-  const c=campById(currentCampId), file=e.target.files[0];
-  if(!c||!file){e.target.value='';return;}
-  if(!/^image\//.test(file.type)){toast('Selecione um arquivo de imagem.','warn');e.target.value='';return;}
-  if(file.size>1024*1024){toast('Imagem muito grande (máx. 1 MB). Use uma versão otimizada.','warn');e.target.value='';return;}
-  const r=new FileReader();
-  r.onload=()=>{c.logo=r.result;save();renderCampBrand();renderCampanhas();toast('Logo atualizada!','ok');};
-  r.onerror=()=>toast('Não foi possível ler a imagem.','warn');
-  r.readAsDataURL(file);e.target.value='';
+  const c=campById(currentCampId);if(!c){e.target.value='';return;}
+  pickImage(e,LOGO_MAX_PX,10*1024*1024,url=>{c.logo=url;save();renderCampBrand();renderCampanhas();toast('Logo atualizada!','ok');});
 });
-// upload da logo da plataforma
-$('#appLogoInput').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file){return;}
-  if(!/^image\//.test(file.type)){toast('Selecione um arquivo de imagem.','warn');e.target.value='';return;}
-  if(file.size>1024*1024){toast('Imagem muito grande (máx. 1 MB). Use uma versão otimizada.','warn');e.target.value='';return;}
-  const r=new FileReader();
-  r.onload=()=>{brand().logo=r.result;save();applyBrand();renderBrandConfig();toast('Logo da plataforma atualizada!','ok');};
-  r.onerror=()=>toast('Não foi possível ler a imagem.','warn');
-  r.readAsDataURL(file);e.target.value='';
-});
-$('#appFaviconInput').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file){return;}
-  if(!/^image\//.test(file.type)&&!/\.ico$/i.test(file.name)){toast('Selecione um arquivo de imagem (PNG, ICO ou SVG).','warn');e.target.value='';return;}
-  if(file.size>200*1024){toast('Favicon muito grande (máx. 200 KB).','warn');e.target.value='';return;}
-  const r=new FileReader();
-  r.onload=()=>{brand().favicon=r.result;save();applyBrand();renderBrandConfig();toast('Favicon atualizado!','ok');};
-  r.onerror=()=>toast('Não foi possível ler a imagem.','warn');
-  r.readAsDataURL(file);e.target.value='';
-});
+$('#appLogoInput').addEventListener('change',e=>pickImage(e,LOGO_MAX_PX,10*1024*1024,url=>{brand().logo=url;save();applyBrand();renderBrandConfig();toast('Logo da plataforma atualizada!','ok');}));
+$('#appFaviconInput').addEventListener('change',e=>pickImage(e,FAVICON_MAX_PX,2*1024*1024,url=>{brand().favicon=url;save();applyBrand();renderBrandConfig();toast('Favicon atualizado!','ok');}));
+// Logos grandes já salvas: reduz uma vez (deixa todas as próximas sincronizações mais leves).
+async function shrinkStoredImages(){
+  if(REVIEW_MODE||readonly()||!Auth.loggedIn())return;
+  const alvos=[];
+  const b=state.config&&state.config.brand;
+  if(b&&(b.logo||'').length>IMG_BIG_CHARS)alvos.push([b,'logo',LOGO_MAX_PX]);
+  if(b&&(b.favicon||'').length>IMG_BIG_CHARS/4)alvos.push([b,'favicon',FAVICON_MAX_PX]);
+  (state.campanhas||[]).forEach(c=>{if((c.logo||'').length>IMG_BIG_CHARS)alvos.push([c,'logo',LOGO_MAX_PX]);});
+  if(!alvos.length)return;
+  let antes=0,depois=0;
+  for(const [obj,key,px] of alvos){try{antes+=obj[key].length;const novo=await shrinkDataURL(obj[key],px);obj[key]=novo;depois+=novo.length;}catch(e){console.error(e);}}
+  if(depois<antes){save();applyBrand();console.info('Imagens otimizadas: '+fmtSize(antes)+' → '+fmtSize(depois));}
+}
 
 /* ============ CALENDÁRIO EDITORIAL ============ */
 function filteredPosts(c){
@@ -4096,7 +4132,8 @@ $('#saveContato').addEventListener('click',()=>{
 });
 $('#addContatoBtn').addEventListener('click',()=>openContatoModal());
 $$('#contatoModal [data-contatoclose]').forEach(b=>b.addEventListener('click',closeContatoModal));
-$('#contatoSearch').addEventListener('input',e=>{contatoSearch=e.target.value;renderContatos();});
+let _contatoTimer=null;
+$('#contatoSearch').addEventListener('input',e=>{contatoSearch=e.target.value;clearTimeout(_contatoTimer);_contatoTimer=setTimeout(renderContatos,200);});
 /* ----- pastas de contatos ----- */
 function addPastaFlow(){
   const v=prompt('Nome da nova pasta:','');if(v==null)return;const nome=v.trim();if(!nome)return;
@@ -5173,7 +5210,7 @@ function renderBrandConfig(){
           <button class="btn btn-ghost btn-sm" id="appLogoBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12 4 4m-4-4-4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Enviar logo</button>
           ${b.logo?`<button class="btn btn-ghost btn-sm" id="appLogoRm" style="color:var(--vermelho);border-color:var(--vermelho)">Remover</button>`:''}
         </div>
-        <p class="hint" style="margin-top:8px;max-width:160px">PNG, JPG ou SVG, até 1&nbsp;MB.</p>
+        <p class="hint" style="margin-top:8px;max-width:160px">PNG, JPG ou SVG — otimizada automaticamente.</p>
       </div>
       <div style="flex:1;min-width:220px">
         <div class="field" style="margin-bottom:14px"><label>Título</label><input type="text" id="appTitulo" value="${esc(b.titulo)}" placeholder="Ex.: Hub de Marketing" /></div>
@@ -5184,7 +5221,7 @@ function renderBrandConfig(){
             <button class="btn btn-ghost btn-sm" id="appFavBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0-12 4 4m-4-4-4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Enviar favicon</button>
             ${b.favicon?`<button class="btn btn-ghost btn-sm" id="appFavRm" style="color:var(--vermelho);border-color:var(--vermelho)">Remover</button>`:''}
           </div>
-          <div class="hint">Imagem quadrada pequena (PNG, ICO ou SVG), até 200&nbsp;KB.</div>
+          <div class="hint">Imagem quadrada (PNG, ICO ou SVG) — reduzida automaticamente.</div>
         </div>
       </div>
     </div>`;
@@ -5792,7 +5829,9 @@ $('#scrim').addEventListener('click',closeSidebar);
 $$('#catFilters .chip').forEach(c=>c.addEventListener('click',()=>{filters.cat=c.dataset.cat;renderAgents();}));
 $('#areaFilter').addEventListener('change',e=>{filters.area=e.target.value;renderAgents();});
 $$('#campFilters .chip').forEach(c=>c.addEventListener('click',()=>{$$('#campFilters .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');filters.campSt=c.dataset.st;renderCampanhas();}));
-$('#globalSearch').addEventListener('input',e=>{filters.search=e.target.value;
+let _searchTimer=null; // redesenha só depois que a pessoa para de digitar
+$('#globalSearch').addEventListener('input',e=>{const v=e.target.value;clearTimeout(_searchTimer);_searchTimer=setTimeout(()=>runGlobalSearch(v),200);});
+function runGlobalSearch(v){filters.search=v;
   if(view==='agentes')renderAgents();
   else if(view==='campanhas')renderCampanhas();
   else if(view==='campanha'){calShowAll=false;renderCampCalendar();}
@@ -5800,7 +5839,7 @@ $('#globalSearch').addEventListener('input',e=>{filters.search=e.target.value;
   else if(view==='tarefas')renderTarefas();
   else if(view==='aprovacao')renderAprov();
   else if(view==='dashboard')renderRecent();
-});
+}
 
 /* ============ MODAL AGENTE ============ */
 let selEmoji=EMOJIS[0];
@@ -6225,7 +6264,7 @@ async function boot(){
   loadNotifs();renderNotifs();buildAprovSnap();startPolling();startIntegrationPolling();applyReadonly();updateOpUI();
   renderStats();renderRecent();renderUpcoming();renderAreaFilter();renderAgents();renderCampanhas();renderBadges();
   if(REVIEW_MODE)enterReviewMode();
-  else if(Auth.loggedIn()){checkResetRequests();setInterval(checkResetRequests,120000);}
+  else if(Auth.loggedIn()){setTimeout(shrinkStoredImages,1500);checkResetRequests();setInterval(checkResetRequests,120000);}
 }
 /* ----- assistentes de IA nos formulários ----- */
 /* Agente de IA: o painel é controlado pelo checkbox #f-ia (propriedade do agente) */
