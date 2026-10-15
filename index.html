@@ -361,6 +361,13 @@ select.chip{padding-right:30px;cursor:pointer}
 .camp-detail-head .ch-logo img{max-width:84%;max-height:84%;object-fit:contain}
 @media(max-width:600px){.camp-detail-head .ch-title{gap:12px}.camp-detail-head .ch-logo{width:48px;height:48px;flex:0 0 48px}}
 .camp-detail-head .ch-row{display:flex;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap;position:relative;z-index:2}
+.drive-btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:11px;border:none;background:#fff;color:#13233b;font-family:inherit;font-size:13px;font-weight:800;text-decoration:none;cursor:pointer;box-shadow:0 8px 20px -10px rgba(0,0,0,.6);transition:transform .15s,box-shadow .15s}
+.drive-btn svg{width:17px;height:17px;flex:0 0 17px}
+.drive-btn .ext{width:13px;height:13px;flex:0 0 13px;opacity:.6}
+.drive-btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(0,0,0,.7)}
+.drive-btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.drive-btn.empty{background:rgba(255,255,255,.14);color:#fff;border:1.5px dashed rgba(255,255,255,.55);box-shadow:none}
+.drive-btn.empty:hover{background:rgba(255,255,255,.24)}
 .status-switch{display:inline-flex;background:rgba(255,255,255,.16);border-radius:12px;padding:4px;gap:4px}
 .status-switch button{border:none;background:transparent;color:#fff;font-family:inherit;font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:9px;cursor:pointer;transition:.2s;opacity:.8}
 .status-switch button.on{background:#fff;color:#13233b;opacity:1}
@@ -2204,6 +2211,11 @@ body.reconnect-on{overflow:hidden}
         <select id="c-resp"></select>
       </div>
       <div class="field">
+        <label for="c-drive">Link do Drive da campanha</label>
+        <input type="url" id="c-drive" placeholder="https://drive.google.com/drive/folders/…" spellcheck="false" />
+        <div class="hint">Abre pelo botão <b>"Drive da campanha"</b>, no topo da página da campanha.</div>
+      </div>
+      <div class="field">
         <label>Cor da campanha</label>
         <div class="color-pick" id="colorPick"></div>
       </div>
@@ -3692,6 +3704,8 @@ function renderCampanhaDetail(){
         <button data-st="andamento" class="${c.status==='andamento'?'on':''}">● Em andamento</button>
         <button data-st="encerrada" class="${c.status==='encerrada'?'on':''}">● Encerrada</button>
       </div>
+      ${c.driveLink?`<a class="drive-btn" href="${esc(safeUrl(c.driveLink))}" target="_blank" rel="noopener" title="Abrir a pasta da campanha no Drive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8.5 3h7l6 10.5-3.5 6h-12L2.5 13.5z"/><path d="M8.5 3 15 14.5h6.5M2.5 13.5h12L18 19.5M15.5 3 9 14.5"/></svg>Drive da campanha<svg class="ext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M7 17 17 7M8 7h9v9"/></svg></a>`
+        :`<button class="drive-btn empty" id="campDriveAdd" title="Nenhum link cadastrado — adicione em Editar campanha"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8.5 3h7l6 10.5-3.5 6h-12L2.5 13.5z"/><path d="M8.5 3 15 14.5h6.5M2.5 13.5h12L18 19.5M15.5 3 9 14.5"/></svg>Drive da campanha</button>`}
       ${c.periodo?`<span class="meta-i" style="background:rgba(255,255,255,.18);color:#fff">🗓️ ${esc(c.periodo)}</span>`:''}
       <span class="meta-i" style="background:rgba(255,255,255,.18);color:#fff">🤖 ${nAg} agente${nAg!==1?'s':''}</span>
       ${c.responsavel?`<span class="meta-i" style="background:rgba(255,255,255,.18);color:#fff">👤 ${esc(c.responsavel)}</span>`:''}
@@ -3703,6 +3717,10 @@ function renderCampanhaDetail(){
   // bind
   $('#campBack').addEventListener('click',()=>go('campanhas'));
   $('#campEditBtn').addEventListener('click',()=>openCampModal(c));
+  $('#campDriveAdd')?.addEventListener('click',()=>{
+    if(readonly()){toast('Esta campanha ainda não tem link do Drive.','info');return;}
+    openCampModal(c);toast('Cole o link do Drive da campanha e salve.','info');setTimeout(()=>{const i=$('#c-drive');i.scrollIntoView({block:'center'});i.focus();},180);
+  });
   $$('#campStatusSwitch button').forEach(b=>b.addEventListener('click',()=>{
     c.status=b.dataset.st;save();renderCampanhaDetail();renderCampanhas();renderStats();
     toast('Status: '+(c.status==='andamento'?'Em andamento':'Encerrada'),'info');
@@ -6150,6 +6168,7 @@ window.openCampModal=function(c){
   $('#c-desc').value=c?c.desc:'';
   $('#c-status').value=c?c.status:'andamento';
   $('#c-periodo').value=c?(c.periodo||''):'';
+  $('#c-drive').value=c?(c.driveLink||''):'';
   $('#c-resp').innerHTML=pessoaOptions(c?(c.responsavel||''):'');
   selColor=c?(c.cor||CAMP_COLORS[0]):CAMP_COLORS[0];buildColorPick();
   resetIaBox('iaCamp');$('#campModal').classList.add('open');setTimeout(()=>$('#c-nome').focus(),100);
@@ -6158,7 +6177,9 @@ function closeCampModal(){$('#campModal').classList.remove('open')}
 $('#saveCamp').addEventListener('click',()=>{
   const nome=$('#c-nome').value.trim();
   if(!nome){toast('Dê um nome à campanha.','warn');$('#c-nome').focus();return}
-  const data={nome,desc:$('#c-desc').value.trim(),status:$('#c-status').value,periodo:$('#c-periodo').value.trim(),responsavel:$('#c-resp').value,cor:selColor};
+  const driveLink=$('#c-drive').value.trim();
+  if(driveLink&&!/^(https?:\/\/)?[^\s.]+\.[^\s]+$/i.test(driveLink)){toast('O link do Drive não parece válido. Cole o endereço completo da pasta.','warn');$('#c-drive').focus();return;}
+  const data={nome,desc:$('#c-desc').value.trim(),status:$('#c-status').value,periodo:$('#c-periodo').value.trim(),responsavel:$('#c-resp').value,cor:selColor,driveLink};
   const eid=$('#c-id').value;
   if(eid){const c=campById(eid);Object.assign(c,data);toast('Campanha atualizada!','ok');}
   else{state.campanhas.unshift({id:id(),createdAt:new Date().toISOString(),...data});toast('Campanha criada!','ok');}
