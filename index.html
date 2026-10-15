@@ -1027,6 +1027,96 @@ body.review-on{overflow:hidden}
 .cfg-item .nm{overflow-wrap:anywhere}
 @media(max-width:560px){.trow,.post-row{flex-wrap:wrap}.trow .tr-actions,.post-row .pr-actions{width:100%;justify-content:flex-start}}
 
+/* ===== FLUXOS: lista ===== */
+.fx-list{display:flex;flex-direction:column;gap:10px}
+.fx-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto 190px auto 18px;align-items:center;gap:16px;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-left:4px solid var(--fx,var(--azul-300));border-radius:14px;padding:14px 16px;box-shadow:var(--sombra);cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;animation:cardIn .3s ease both}
+.fx-row:hover{transform:translateY(-2px);border-color:var(--azul-300);box-shadow:var(--sombra-forte)}
+.fx-row:focus-visible{outline:3px solid var(--azul-300);outline-offset:2px}
+.fx-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--fx,var(--azul-300))}
+.fx-ico svg{width:22px;height:22px}
+.fx-main{min-width:0}
+.fx-name{font-weight:800;font-size:15.5px;line-height:1.3;color:var(--texto);overflow-wrap:anywhere}
+.fx-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:5px;font-size:12.5px;color:var(--texto-suave);font-weight:600}
+.fx-now{display:inline-flex;align-items:center;gap:6px}
+.fx-now .dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+.fx-dots{display:flex;gap:4px;align-items:center;flex-wrap:wrap;max-width:160px}
+.fx-dots i{width:10px;height:10px;border-radius:3px;display:block}
+.fx-prog{display:flex;flex-direction:column;gap:6px}
+.fx-prog .fx-bar{height:8px;border-radius:8px;background:var(--surface-2);overflow:hidden}
+.fx-prog .fx-bar .fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width .4s}
+.fx-prog span{font-size:12px;font-weight:700;color:var(--texto-suave)}
+.fx-actions{display:flex;gap:6px}
+.fx-chev{width:18px;height:18px;color:var(--texto-suave)}
+@media(max-width:860px){
+  .fx-row{grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ico main act" "prog prog prog" "dots dots dots";row-gap:12px}
+  .fx-ico{grid-area:ico}.fx-main{grid-area:main}.fx-actions{grid-area:act}.fx-prog{grid-area:prog}.fx-dots{grid-area:dots;max-width:none}.fx-chev{display:none}
+}
+
+/* ===== FLUXOS: fluxograma (arrastar + zoom) ===== */
+.fv-overlay{position:fixed;inset:0;z-index:96;display:none;background:rgba(7,18,40,.55);backdrop-filter:blur(6px);padding:24px}
+.fv-overlay.open{display:flex;animation:fadeIn .2s ease}
+body.fv-on{overflow:hidden}
+.fv-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:22px;box-shadow:var(--sombra-forte);overflow:hidden;animation:modalIn .3s cubic-bezier(.34,1.56,.64,1)}
+.fv-head{display:flex;align-items:flex-start;gap:14px;padding:18px 22px 14px}
+.fv-title-wrap{flex:1;min-width:0}
+.fv-head h3{font-size:20px;font-weight:800;letter-spacing:-.3px;overflow-wrap:anywhere}
+.fv-sub{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:6px;font-size:13px;color:var(--texto-suave);font-weight:600}
+.fv-head-actions{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+.fv-close{width:38px;height:38px;border-radius:11px;border:1px solid var(--cinza-borda);background:var(--surface-2);color:var(--texto);cursor:pointer;display:grid;place-items:center;transition:.18s}
+.fv-close:hover{background:var(--vermelho);border-color:var(--vermelho);color:#fff;transform:rotate(90deg)}
+.fv-close svg{width:18px;height:18px}
+.fv-progress{height:5px;background:var(--surface-2)}
+.fv-progress .fill{height:100%;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width .4s}
+.fv-canvas{position:relative;flex:1;min-height:0;overflow:hidden;cursor:grab;touch-action:none;outline:none;user-select:none;-webkit-user-select:none;
+  background-color:var(--cinza-bg);background-image:radial-gradient(circle,color-mix(in srgb,var(--texto-suave) 28%,transparent) 1.2px,transparent 1.3px);background-size:24px 24px}
+.fv-canvas.panning{cursor:grabbing}
+.fv-canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--azul-300)}
+.fv-stage{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;align-items:center;padding:40px;will-change:transform}
+.fv-node{position:relative;width:230px;flex:0 0 230px;background:var(--cinza-card);border:1.5px solid var(--cinza-borda);border-top:5px solid var(--st);border-radius:16px;padding:14px 14px 12px;box-shadow:var(--sombra);cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;user-select:none}
+.fv-node:hover{transform:translateY(-3px);box-shadow:var(--sombra-forte);border-color:var(--azul-300);border-top-color:var(--st)}
+.fv-node:focus-visible{outline:3px solid var(--azul-300);outline-offset:3px}
+.fv-node.feito{background:color-mix(in srgb,#16A34A 7%,var(--cinza-card))}
+.fv-node.fazendo{background:color-mix(in srgb,#F59E0B 8%,var(--cinza-card));box-shadow:0 0 0 4px color-mix(in srgb,#F59E0B 22%,transparent),var(--sombra)}
+.fv-node .fn-top{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.fv-node .fn-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;font-weight:800;color:#fff;background:var(--st);flex:0 0 28px}
+.fv-node .fn-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--texto-suave);flex:1}
+.fv-node .fn-tools{display:flex;gap:3px;opacity:0;transition:opacity .15s}
+.fv-node:hover .fn-tools,.fv-node:focus-within .fn-tools{opacity:1}
+.fv-node .fn-tools button{width:24px;height:24px;border-radius:7px;border:1px solid var(--cinza-borda);background:var(--cinza-card);color:var(--texto-suave);cursor:pointer;display:grid;place-items:center;font-size:12px;font-weight:800;line-height:1}
+.fv-node .fn-tools button:hover{color:var(--azul);border-color:var(--azul-300)}
+.fv-node .fn-tools button.danger:hover{color:#fff;background:var(--vermelho);border-color:var(--vermelho)}
+.fv-node .fn-tools button:disabled{opacity:.35;cursor:default}
+.fv-node .fn-tools svg{width:12px;height:12px}
+.fv-node .fn-name{font-size:15px;font-weight:800;line-height:1.3;color:var(--texto);overflow-wrap:anywhere}
+.fv-node .fn-desc{font-size:12px;color:var(--texto-suave);line-height:1.45;margin-top:5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.fv-node .fn-status{margin-top:11px;display:inline-flex;align-items:center;gap:6px;border:none;cursor:pointer;font-family:inherit;font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:20px;color:var(--st);background:color-mix(in srgb,var(--st) 15%,transparent);transition:.15s}
+.fv-node .fn-status:hover{background:var(--st);color:#fff}
+.fv-node .fn-status .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.fv-node .fn-ck{margin-top:10px}
+.fv-node .fn-ck .bar{height:5px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.fv-node .fn-ck .bar i{display:block;height:100%;background:#16A34A;border-radius:5px}
+.fv-node .fn-ck span{display:block;font-size:11px;font-weight:700;color:var(--texto-suave);margin-top:4px}
+.fv-link{flex:0 0 64px;height:2px;position:relative;margin:0 4px;background:var(--lk,var(--cinza-borda))}
+.fv-link::after{content:"";position:absolute;right:-2px;top:50%;width:10px;height:10px;border-top:2.5px solid var(--lk,var(--cinza-borda));border-right:2.5px solid var(--lk,var(--cinza-borda));transform:translateY(-50%) rotate(45deg)}
+.fv-link.done{--lk:#16A34A}
+.fv-add-node{width:170px;flex:0 0 170px;min-height:120px;border:2px dashed var(--cinza-borda);border-radius:16px;background:transparent;color:var(--texto-suave);font-family:inherit;font-weight:800;font-size:13.5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.fv-add-node:hover{border-color:var(--azul-300);color:var(--azul-300);background:color-mix(in srgb,var(--azul-300) 6%,transparent)}
+.fv-add-node svg{width:22px;height:22px}
+.fv-empty{padding:30px;color:var(--texto-suave);font-weight:600}
+.fv-legend{position:absolute;left:14px;top:14px;display:flex;gap:12px;flex-wrap:wrap;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:12px;padding:8px 12px;font-size:12px;font-weight:700;color:var(--texto-suave);box-shadow:var(--sombra)}
+.fv-legend span{display:inline-flex;align-items:center;gap:6px}
+.fv-legend i{width:10px;height:10px;border-radius:50%;display:block}
+.fv-zoom{position:absolute;right:14px;bottom:14px;display:flex;align-items:center;gap:2px;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:12px;padding:4px;box-shadow:var(--sombra)}
+.fv-zoom button{width:34px;height:34px;border:none;border-radius:9px;background:transparent;color:var(--texto);font-size:19px;font-weight:700;cursor:pointer;display:grid;place-items:center;font-family:inherit}
+.fv-zoom button:hover{background:var(--surface-2);color:var(--azul-300)}
+.fv-zoom button svg{width:17px;height:17px}
+.fv-zoom span{min-width:48px;text-align:center;font-size:12.5px;font-weight:800;color:var(--texto-suave)}
+.fv-hint{position:absolute;left:14px;bottom:14px;font-size:12px;font-weight:600;color:var(--texto-suave);background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:10px;padding:7px 11px;box-shadow:var(--sombra)}
+.fv-foot{margin:0;padding:14px 22px;border-top:1px solid var(--cinza-borda);background:var(--cinza-card)}
+@media(max-width:700px){.fv-overlay{padding:0}.fv-panel{border-radius:0}.fv-hint{display:none}.fv-legend{font-size:11px;gap:8px}.fv-head{padding:14px 16px 12px}.fv-foot{padding:12px 16px}}
+body.readonly .fv-node .fn-tools,body.readonly .fv-add-node,body.readonly #fvEdit,body.readonly #fvDel{display:none!important}
+body.readonly .fv-node .fn-status{pointer-events:none}
+
 /* ===== SUA CONTA (Configurações) ===== */
 .session-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .session-who{flex:1;min-width:220px;display:flex;align-items:center;gap:12px}
@@ -1447,7 +1537,7 @@ body.reconnect-on{overflow:hidden}
       <section class="view" id="view-fluxos">
         <div class="page-head">
           <h2><span class="accent"></span>Fluxos de projeto</h2>
-          <p>Mapeie cada projeto como uma sequência de etapas. Clique numa etapa para avançar o status (Pendente → Em andamento → Concluída).</p>
+          <p>Cada projeto é uma sequência de etapas. Clique em um fluxo para abrir o <b>fluxograma</b> — arraste para mover, use a roda do mouse para aproximar e clique numa etapa para abrir anotações e checklist.</p>
         </div>
         <div class="toolbar">
           <select id="fluxCampFilter" class="chip"></select>
@@ -1753,6 +1843,11 @@ body.reconnect-on{overflow:hidden}
             <h3>12. Fluxos de projeto</h3>
             <p>Cada projeto é mapeado como uma <b>sequência de etapas</b> (Etapa 1 → 2 → 3…), com barra de progresso e responsável.</p>
             <ul>
+              <li><b>Lista:</b> a tela mostra os fluxos em lista, com a etapa atual ("Agora"), o progresso e um mini-mapa colorido das etapas.</li>
+              <li><b>Fluxograma:</b> clique em um fluxo para abri-lo em tela cheia. Arraste o fundo para mover, use a roda do mouse (ou a pinça no celular) e os botões − / + para o zoom, e ⤢ para ajustar tudo à tela. Atalhos: setas movem, + e − aproximam/afastam, 0 ajusta, Esc fecha.</li>
+              <li><b>No fluxograma:</b> clique na etapa para abrir anotações e checklist; clique no status para avançá-lo (Pendente → Em andamento → Concluída); use ‹ › para reordenar e × para remover; adicione etapas pela barra inferior.</li>
+            </ul>
+            <ul>
               <li><b>Cartão da etapa:</b> clique em uma etapa para abrir. Dentro dela você define o status (Pendente/Em andamento/Concluída), escreve <b>anotações</b> e cria uma <b>checklist</b> (lista de a fazer) com itens marcáveis.</li>
               <li>O card mostra indicadores: progresso da checklist e ícone de anotações.</li>
             </ul>
@@ -1823,7 +1918,7 @@ body.reconnect-on{overflow:hidden}
           <section class="doc-sec" id="doc-changelog">
             <h3>17. Histórico de versões</h3>
             <ul class="doc-log">
-              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
+              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
               <li><b>v2.4 — 24/08/2026</b><br><b>Tarefas e agentes mais flexíveis</b>: a tela de tarefas ganhou cards compactos, descrição somente no modal, criação/ordenação/renomeação/exclusão de colunas direto no quadro, além da lista agrupada por etapa. O cadastro de agentes agora permite adicionar prompts na criação, e os cards exibem atalhos para abrir o chat e os prompts quando existirem. A aprovação pública não exige login no link compartilhado. A integração Gemini/Gerar com IA foi retirada da interface.</li>
               <li><b>v2.3 — 27/06/2026</b><br><b>Contatos — setor e pastas</b>: o cadastro de contato ganhou o campo <b>Setor</b> (com sugestões dos setores já usados) e a opção de organizar os contatos em <b>pastas</b> — com filtro por pasta no topo e um gerenciador para criar, renomear e remover pastas.</li>
               <li><b>v2.2 — 27/06/2026</b><br><b>Lista de contatos</b>: nova seção para cadastrar contatos (nome, celular e observações), com busca e atalho para o WhatsApp. <b>Aprovação — quem revisou</b>: ao aprovar ou solicitar alteração pelo link, a pessoa informa o nome, que aparece no cartão da arte como "Revisado por: [nome]". <b>Link de aprovação</b>: a lista "Artes neste link" ficou mais alta, facilitando a seleção.</li>
@@ -2205,6 +2300,43 @@ body.reconnect-on{overflow:hidden}
     <div class="modal-foot">
       <button class="btn btn-ghost" data-fluxclose>Cancelar</button>
       <button class="btn btn-primary" id="saveFluxo">Salvar fluxo</button>
+    </div>
+  </div>
+</div>
+
+<!-- VISUALIZADOR DO FLUXOGRAMA (arrastar + zoom) -->
+<div class="fv-overlay" id="fluxoViewer" aria-hidden="true">
+  <div class="fv-panel" role="dialog" aria-modal="true" aria-labelledby="fvTitle">
+    <div class="fv-head">
+      <div class="fv-title-wrap">
+        <h3 id="fvTitle"></h3>
+        <div class="fv-sub" id="fvSub"></div>
+      </div>
+      <div class="fv-head-actions">
+        <button class="icon-btn" id="fvEdit" data-fluxedit="" title="Editar fluxo"></button>
+        <button class="icon-btn danger" id="fvDel" data-fluxdel="" title="Excluir fluxo"></button>
+        <button class="fv-close" id="fvClose" title="Fechar (Esc)" aria-label="Fechar fluxograma"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </div>
+    <div class="fv-progress"><div class="fill" id="fvFill"></div></div>
+    <div class="fv-canvas" id="fvCanvas" tabindex="0" aria-label="Fluxograma — arraste para mover, use a roda do mouse para aproximar">
+      <div class="fv-stage" id="fvStage"></div>
+      <div class="fv-legend">
+        <span><i style="background:#94A3B8"></i>Pendente</span>
+        <span><i style="background:#F59E0B"></i>Em andamento</span>
+        <span><i style="background:#16A34A"></i>Concluída</span>
+      </div>
+      <div class="fv-zoom" role="toolbar" aria-label="Zoom">
+        <button id="fvZoomOut" title="Afastar (−)" aria-label="Afastar">−</button>
+        <span id="fvZoomPct">100%</span>
+        <button id="fvZoomIn" title="Aproximar (+)" aria-label="Aproximar">+</button>
+        <button id="fvFit" title="Ajustar à tela (0)" aria-label="Ajustar à tela"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+      <div class="fv-hint">Arraste para mover · roda do mouse para zoom · clique numa etapa para abrir</div>
+    </div>
+    <div class="fv-foot fluxo-add">
+      <input type="text" id="fvStepInp" placeholder="Nome da nova etapa…" aria-label="Nova etapa" />
+      <button class="btn btn-dark btn-sm" id="fvStepAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar etapa</button>
     </div>
   </div>
 </div>
@@ -4566,28 +4698,23 @@ function fluxosFiltered(){return (state.projetos||[]).filter(p=>fluxCamp==='toda
 function fluxoStepCycle(s){return s==='pendente'?'fazendo':s==='fazendo'?'feito':'pendente';}
 function fluxoStepLabel(s){return {pendente:'Pendente',fazendo:'Em andamento',feito:'Concluída'}[s]||s;}
 function fluxoStepColor(s){return {pendente:'#94A3B8',fazendo:'#F59E0B',feito:'#16A34A'}[s]||'#94A3B8';}
-function fluxoCardHTML(pr){
+const FLOW_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h6a3 3 0 0 1 3 3v6"/></svg>';
+function fluxoAtual(pr){return pr.etapas.find(e=>e.status==='fazendo')||pr.etapas.find(e=>e.status!=='feito')||null;}
+function fluxoRowHTML(pr){
   const camp=pr.campanhaId?campById(pr.campanhaId):null;
   const done=pr.etapas.filter(e=>e.status==='feito').length, total=pr.etapas.length;
   const pct=total?Math.round(done/total*100):0;
-  const steps=pr.etapas.map((e,i)=>{
-    const ck=e.checklist||[], ckDone=ck.filter(x=>x.feito).length;
-    const indic=[];
-    if(ck.length)indic.push(`<span class="fb-ind" title="Itens da checklist">✓ ${ckDone}/${ck.length}</span>`);
-    if((e.desc||'').trim())indic.push(`<span class="fb-ind" title="Tem anotações">📝</span>`);
-    return `<div class="fstep">
-    <div class="fbox ${e.status}" data-stepopen="${e.id}" data-pr="${pr.id}" title="Abrir cartão da etapa">
-      <button class="frm" data-steprm="${e.id}" data-pr="${pr.id}" title="Remover etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-      <div class="fb-n">Etapa ${i+1}</div><div class="fb-name">${esc(e.nome)}</div>
-      <div class="fb-st" style="color:${fluxoStepColor(e.status)}"><span class="dot" style="background:${fluxoStepColor(e.status)}"></span>${fluxoStepLabel(e.status)}</div>
-      ${indic.length?`<div class="fb-inds">${indic.join('')}</div>`:''}
-    </div>${i<pr.etapas.length-1?`<div class="farrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>`:''}
-  </div>`;}).join('');
-  return `<div class="fluxo-card">
-    <div class="fluxo-head"><div class="fh-main"><h3>${esc(pr.nome)}</h3><div class="fh-sub">${camp?`<span class="kcamp-chip" style="background:${camp.cor}">${esc(camp.nome)}</span> · `:''}${done}/${total} etapas concluídas${pr.responsavel?' · 👤 '+esc(pr.responsavel):''}${pr.desc?' · '+esc(pr.desc):''}</div></div><div class="fh-actions"><button class="icon-btn" data-fluxedit="${pr.id}" title="Editar">${EDIT_SVG}</button><button class="icon-btn danger" data-fluxdel="${pr.id}" title="Excluir">${RM_SVG}</button></div></div>
-    <div class="fluxo-steps">${steps||'<p class="hint" style="margin:0">Sem etapas ainda. Adicione abaixo.</p>'}</div>
-    <div class="fluxo-bar"><div class="fill" style="width:${pct}%"></div></div>
-    <div class="fluxo-add"><input type="text" id="stepinp-${pr.id}" data-stepinp="${pr.id}" placeholder="Nova etapa…" /><button class="btn btn-dark btn-sm" data-stepadd="${pr.id}">+ Etapa</button></div>
+  const now=fluxoAtual(pr);
+  const nowTxt=!total?'Sem etapas':now?`<span class="fx-now"><span class="dot" style="background:${fluxoStepColor(now.status)}"></span>Agora: <b>${esc(now.nome)}</b></span>`:'<span class="fx-now"><span class="dot" style="background:#16A34A"></span><b>Concluído</b></span>';
+  const dots=pr.etapas.map((e,i)=>`<i style="background:${fluxoStepColor(e.status)}" title="Etapa ${i+1}: ${esc(e.nome)} — ${fluxoStepLabel(e.status)}"></i>`).join('');
+  return `<div class="fx-row" style="--fx:${camp?camp.cor:'var(--azul-300)'}" data-fluxopen="${pr.id}" tabindex="0" role="button" aria-label="Abrir fluxograma ${esc(pr.nome)}">
+    <div class="fx-ico">${FLOW_ICO}</div>
+    <div class="fx-main"><div class="fx-name">${esc(pr.nome)}</div>
+      <div class="fx-meta">${camp?`<span class="kcamp-chip" style="background:${camp.cor}">${esc(camp.nome)}</span>`:''}${nowTxt}${pr.responsavel?`<span>👤 ${esc(pr.responsavel)}</span>`:''}</div></div>
+    <div class="fx-dots" aria-hidden="true">${dots}</div>
+    <div class="fx-prog"><div class="fx-bar"><div class="fill" style="width:${pct}%"></div></div><span>${done}/${total} etapas · ${pct}%</span></div>
+    <div class="fx-actions"><button class="icon-btn" data-fluxedit="${pr.id}" title="Editar fluxo">${EDIT_SVG}</button><button class="icon-btn danger" data-fluxdel="${pr.id}" title="Excluir fluxo">${RM_SVG}</button></div>
+    <svg class="fx-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 6 6 6-6 6"/></svg>
   </div>`;
 }
 function renderFluxos(){
@@ -4596,14 +4723,150 @@ function renderFluxos(){
   const list=fluxosFiltered();
   $('#fluxCount').textContent=`${list.length} fluxo${list.length!==1?'s':''}`;
   const wrap=$('#fluxosWrap');
-  if(!list.length){wrap.innerHTML=`<div class="empty"><div class="big">🔗</div><h3>Nenhum fluxo de projeto</h3><p>Crie um fluxo e mapeie as etapas do projeto em sequência.</p><button class="btn btn-primary" onclick="openFluxoModal()">Novo fluxo</button></div>`;return;}
-  wrap.innerHTML=list.map(fluxoCardHTML).join('');
-  $$('#fluxosWrap [data-stepopen]').forEach(b=>b.addEventListener('click',e=>{if(e.target.closest('[data-steprm]'))return;openEtapaModal(b.dataset.pr,b.dataset.stepopen);}));
-  $$('#fluxosWrap [data-steprm]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();const pr=projetoById(b.dataset.pr),et=pr&&pr.etapas.find(x=>x.id===b.dataset.steprm);if(pr&&et)openConfirmDelete(et.nome,()=>{pr.etapas=pr.etapas.filter(x=>x.id!==b.dataset.steprm);save();renderFluxos();toast('Etapa removida.','warn');},'Excluir etapa');}));
-  $$('#fluxosWrap [data-stepadd]').forEach(b=>b.addEventListener('click',()=>{const pr=projetoById(b.dataset.stepadd);const inp=$('#stepinp-'+pr.id);const v=inp.value.trim();if(!v)return;pr.etapas.push({id:id(),nome:v,status:'pendente'});save();renderFluxos();}));
-  $$('#fluxosWrap [data-stepinp]').forEach(inp=>inp.addEventListener('keydown',e=>{if(e.key==='Enter'){const pr=projetoById(inp.dataset.stepinp);const v=inp.value.trim();if(v){pr.etapas.push({id:id(),nome:v,status:'pendente'});save();renderFluxos();}}}));
-  $$('#fluxosWrap [data-fluxedit]').forEach(b=>b.addEventListener('click',()=>openFluxoModal(projetoById(b.dataset.fluxedit))));
-  $$('#fluxosWrap [data-fluxdel]').forEach(b=>b.addEventListener('click',()=>{const pr=projetoById(b.dataset.fluxdel);openConfirmDelete(pr.nome,()=>{state.projetos=state.projetos.filter(x=>x.id!==pr.id);save();renderFluxos();toast('Fluxo excluído.','warn');},'Excluir fluxo');}));
+  if(!list.length)wrap.innerHTML=`<div class="empty"><div class="big">🔗</div><h3>Nenhum fluxo de projeto</h3><p>Crie um fluxo e mapeie as etapas do projeto em sequência.</p><button class="btn btn-primary" onclick="openFluxoModal()">Novo fluxo</button></div>`;
+  else{
+    wrap.innerHTML=`<div class="fx-list">${list.map(fluxoRowHTML).join('')}</div>`;
+    $$('#fluxosWrap [data-fluxopen]').forEach(r=>{
+      r.addEventListener('click',e=>{if(e.target.closest('button'))return;openFluxoViewer(r.dataset.fluxopen);});
+      r.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target===r){e.preventDefault();openFluxoViewer(r.dataset.fluxopen);}});
+    });
+    $$('#fluxosWrap [data-fluxedit]').forEach(b=>b.addEventListener('click',()=>openFluxoModal(projetoById(b.dataset.fluxedit))));
+    $$('#fluxosWrap [data-fluxdel]').forEach(b=>b.addEventListener('click',()=>deleteFluxo(b.dataset.fluxdel)));
+  }
+  if(fv.prId)renderFluxoViewer();
+}
+function deleteFluxo(prId){
+  const pr=projetoById(prId);if(!pr)return;
+  openConfirmDelete(pr.nome,()=>{state.projetos=state.projetos.filter(x=>x.id!==pr.id);if(fv.prId===pr.id)closeFluxoViewer();save();renderFluxos();toast('Fluxo excluído.','warn');},'Excluir fluxo');
+}
+
+/* ---- Fluxograma: arrastar para mover, zoom (roda, botões, pinça) ---- */
+const fv={prId:null,x:0,y:0,k:1,pointers:new Map(),pinch:null,drag:null};
+function fvApply(){
+  const st=$('#fvStage'), cv=$('#fvCanvas');if(!st)return;
+  st.style.transform=`translate(${fv.x}px,${fv.y}px) scale(${fv.k})`;
+  const g=24*fv.k;cv.style.backgroundSize=`${g}px ${g}px`;cv.style.backgroundPosition=`${fv.x}px ${fv.y}px`;
+  $('#fvZoomPct').textContent=Math.round(fv.k*100)+'%';
+}
+function fvZoomAt(k,px,py){
+  const cv=$('#fvCanvas');const r=cv.getBoundingClientRect();
+  if(px==null){px=r.width/2;py=r.height/2;}
+  const nk=Math.min(2.5,Math.max(0.25,k));
+  fv.x=px-(px-fv.x)*(nk/fv.k);fv.y=py-(py-fv.y)*(nk/fv.k);fv.k=nk;fvApply();
+}
+function fvFit(){
+  const cv=$('#fvCanvas'), st=$('#fvStage');
+  const cw=cv.clientWidth, ch=cv.clientHeight, sw=st.offsetWidth, sh=st.offsetHeight;
+  if(!sw||!sh)return;
+  fv.k=Math.min(1.1,Math.max(0.3,Math.min((cw-20)/sw,(ch-90)/sh)));
+  fv.x=Math.max(10,(cw-sw*fv.k)/2);fv.y=(ch-sh*fv.k)/2;
+  fvApply();
+}
+// Ao abrir: zoom legível (mín. 75%); se o fluxo não couber, começa pela 1ª etapa e o resto fica a um arrasto.
+function fvInitial(){
+  fvFit();
+  if(fv.k>=0.75)return;
+  const cv=$('#fvCanvas'), st=$('#fvStage');
+  fv.k=0.75;fv.x=10;fv.y=(cv.clientHeight-st.offsetHeight*fv.k)/2;fvApply();
+}
+function fluxoNodeHTML(pr,e,i){
+  const n=pr.etapas.length, ck=e.checklist||[], ckDone=ck.filter(x=>x.feito).length;
+  return `<div class="fv-node ${e.status}" style="--st:${fluxoStepColor(e.status)}" data-fvopen="${e.id}" tabindex="0" role="button" aria-label="Etapa ${i+1}: ${esc(e.nome)}, ${fluxoStepLabel(e.status)}">
+    <div class="fn-top"><span class="fn-num">${i+1}</span><span class="fn-label">Etapa ${i+1}</span>
+      <span class="fn-tools"><button data-fvmove="-1" data-et="${e.id}" title="Mover para a esquerda" ${i===0?'disabled':''}>‹</button><button data-fvmove="1" data-et="${e.id}" title="Mover para a direita" ${i===n-1?'disabled':''}>›</button><button class="danger" data-fvrm="${e.id}" title="Remover etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 6l12 12M18 6 6 18"/></svg></button></span></div>
+    <div class="fn-name">${esc(e.nome)}</div>
+    ${(e.desc||'').trim()?`<div class="fn-desc">${esc(e.desc)}</div>`:''}
+    ${ck.length?`<div class="fn-ck"><div class="bar"><i style="width:${Math.round(ckDone/ck.length*100)}%"></i></div><span>✓ Checklist ${ckDone}/${ck.length}</span></div>`:''}
+    <button class="fn-status" data-fvcycle="${e.id}" title="Clique para avançar o status"><span class="dot"></span>${fluxoStepLabel(e.status)}</button>
+  </div>`;
+}
+function renderFluxoViewer(){
+  const pr=projetoById(fv.prId);if(!pr){closeFluxoViewer();return;}
+  const camp=pr.campanhaId?campById(pr.campanhaId):null;
+  const done=pr.etapas.filter(e=>e.status==='feito').length, total=pr.etapas.length, pct=total?Math.round(done/total*100):0;
+  $('#fvTitle').textContent=pr.nome;
+  $('#fvSub').innerHTML=`${camp?`<span class="kcamp-chip" style="background:${camp.cor}">${esc(camp.nome)}</span>`:''}<span>${done}/${total} etapas concluídas · ${pct}%</span>${pr.responsavel?`<span>👤 ${esc(pr.responsavel)}</span>`:''}${pr.desc?`<span>${esc(pr.desc)}</span>`:''}`;
+  $('#fvFill').style.width=pct+'%';
+  $('#fvEdit').dataset.fluxedit=pr.id;$('#fvDel').dataset.fluxdel=pr.id;
+  const parts=[];
+  pr.etapas.forEach((e,i)=>{parts.push(fluxoNodeHTML(pr,e,i));parts.push(`<div class="fv-link${e.status==='feito'?' done':''}" aria-hidden="true"></div>`);});
+  parts.push(`<button class="fv-add-node" data-fvadd title="Adicionar etapa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Nova etapa</button>`);
+  $('#fvStage').innerHTML=parts.join('');
+}
+function openFluxoViewer(prId){
+  fv.prId=prId;fv.pointers.clear();fv.pinch=null;fv.drag=null;
+  renderFluxoViewer();
+  const ov=$('#fluxoViewer');ov.classList.add('open');ov.setAttribute('aria-hidden','false');document.body.classList.add('fv-on');
+  requestAnimationFrame(()=>{fvInitial();$('#fvCanvas').focus({preventScroll:true});});
+}
+function closeFluxoViewer(){
+  const ov=$('#fluxoViewer');if(!ov)return;
+  ov.classList.remove('open');ov.setAttribute('aria-hidden','true');document.body.classList.remove('fv-on');fv.prId=null;
+}
+function fvStepAdd(nome){
+  const pr=projetoById(fv.prId);nome=(nome||'').trim();if(!pr||!nome)return false;
+  pr.etapas.push({id:id(),nome,status:'pendente',desc:'',checklist:[]});save();renderFluxos();
+  requestAnimationFrame(()=>{const cv=$('#fvCanvas'),st=$('#fvStage');if(st.offsetWidth*fv.k+fv.x>cv.clientWidth)fv.x=cv.clientWidth-st.offsetWidth*fv.k-20;fvApply();});
+  return true;
+}
+function bindFluxoViewer(){
+  const cv=$('#fvCanvas');
+  $('#fvClose').addEventListener('click',closeFluxoViewer);
+  $('#fluxoViewer').addEventListener('click',e=>{if(e.target.id==='fluxoViewer')closeFluxoViewer();});
+  $('#fvEdit').innerHTML=EDIT_SVG;$('#fvDel').innerHTML=RM_SVG;
+  $('#fvEdit').addEventListener('click',()=>openFluxoModal(projetoById(fv.prId)));
+  $('#fvDel').addEventListener('click',()=>deleteFluxo(fv.prId));
+  $('#fvZoomIn').addEventListener('click',()=>fvZoomAt(fv.k*1.2));
+  $('#fvZoomOut').addEventListener('click',()=>fvZoomAt(fv.k/1.2));
+  $('#fvFit').addEventListener('click',fvFit);
+  $('#fvStepAdd').addEventListener('click',()=>{const i=$('#fvStepInp');if(fvStepAdd(i.value))i.value='';else i.focus();});
+  $('#fvStepInp').addEventListener('keydown',e=>{if(e.key==='Enter'){const i=e.target;if(fvStepAdd(i.value))i.value='';}});
+  // ações dentro do fluxograma
+  $('#fvStage').addEventListener('click',e=>{
+    const pr=projetoById(fv.prId);if(!pr)return;
+    const mv=e.target.closest('[data-fvmove]'), rm=e.target.closest('[data-fvrm]'), cy=e.target.closest('[data-fvcycle]'), add=e.target.closest('[data-fvadd]'), node=e.target.closest('[data-fvopen]');
+    if(mv){e.stopPropagation();const i=pr.etapas.findIndex(x=>x.id===mv.dataset.et),j=i+Number(mv.dataset.fvmove);if(i<0||j<0||j>=pr.etapas.length)return;const [it]=pr.etapas.splice(i,1);pr.etapas.splice(j,0,it);save();renderFluxos();return;}
+    if(rm){e.stopPropagation();const et=pr.etapas.find(x=>x.id===rm.dataset.fvrm);if(et)openConfirmDelete(et.nome,()=>{pr.etapas=pr.etapas.filter(x=>x.id!==et.id);save();renderFluxos();toast('Etapa removida.','warn');},'Excluir etapa');return;}
+    if(cy){e.stopPropagation();if(readonly())return;const et=pr.etapas.find(x=>x.id===cy.dataset.fvcycle);if(et){et.status=fluxoStepCycle(et.status);save();renderFluxos();toast(`${et.nome}: ${fluxoStepLabel(et.status)}`,'info');}return;}
+    if(add){$('#fvStepInp').focus();return;}
+    if(node)openEtapaModal(fv.prId,node.dataset.fvopen);
+  });
+  $('#fvStage').addEventListener('keydown',e=>{const node=e.target.closest('[data-fvopen]');if(node&&e.target===node&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openEtapaModal(fv.prId,node.dataset.fvopen);}});
+  // arrastar (mouse/toque) e pinça
+  cv.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.fv-node,button,input,.fv-zoom,.fv-legend'))return;
+    e.preventDefault();try{cv.setPointerCapture(e.pointerId);}catch(_){}fv.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(fv.pointers.size===1){fv.drag={x:e.clientX,y:e.clientY,ox:fv.x,oy:fv.y};cv.classList.add('panning');}
+    else if(fv.pointers.size===2){const [a,b]=[...fv.pointers.values()];fv.pinch={d:Math.hypot(a.x-b.x,a.y-b.y),k:fv.k};fv.drag=null;}
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!fv.pointers.has(e.pointerId))return;
+    fv.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(fv.pinch&&fv.pointers.size===2){const [a,b]=[...fv.pointers.values()];const r=cv.getBoundingClientRect();fvZoomAt(fv.pinch.k*Math.hypot(a.x-b.x,a.y-b.y)/fv.pinch.d,(a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top);return;}
+    if(fv.drag){fv.x=fv.drag.ox+e.clientX-fv.drag.x;fv.y=fv.drag.oy+e.clientY-fv.drag.y;fvApply();}
+  });
+  const end=e=>{fv.pointers.delete(e.pointerId);if(fv.pointers.size<2)fv.pinch=null;if(!fv.pointers.size){fv.drag=null;cv.classList.remove('panning');}};
+  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();
+    if(e.ctrlKey||Math.abs(e.deltaY)>=Math.abs(e.deltaX))fvZoomAt(fv.k*Math.exp(-e.deltaY*0.0015),e.clientX-r.left,e.clientY-r.top);
+    else{fv.x-=e.deltaX;fvApply();}},{passive:false});
+  // teclado: setas movem, +/- zoom, 0 ajusta, Esc fecha
+  document.addEventListener('keydown',e=>{
+    if(!fv.prId||document.querySelector('.overlay.open'))return;
+    if(e.target.closest&&e.target.closest('input,textarea,select'))return;
+    if(e.key==='Escape'){closeFluxoViewer();e.stopImmediatePropagation();return;}
+    const step=60;
+    if(e.key==='+'||e.key==='=')fvZoomAt(fv.k*1.2);
+    else if(e.key==='-')fvZoomAt(fv.k/1.2);
+    else if(e.key==='0')fvFit();
+    else if(e.key==='ArrowLeft'){fv.x+=step;fvApply();}
+    else if(e.key==='ArrowRight'){fv.x-=step;fvApply();}
+    else if(e.key==='ArrowUp'){fv.y+=step;fvApply();}
+    else if(e.key==='ArrowDown'){fv.y-=step;fvApply();}
+    else return;
+    e.preventDefault();
+  },true);
+  let rz=null;window.addEventListener('resize',()=>{if(!fv.prId)return;clearTimeout(rz);rz=setTimeout(fvFit,150);}); // janela mudou de tamanho: reenquadra
 }
 window.openFluxoModal=function(pr){
   $('#fluxoModalTitle').textContent=pr?'Editar fluxo':'Novo fluxo';
@@ -5884,6 +6147,7 @@ $$('.drawer-tab').forEach(tb=>tb.addEventListener('click',()=>{
 /* ============ TRIGGERS ============ */
 bindPlatformLogin();
 bindReconnect();
+bindFluxoViewer();
 $('#addBtn').addEventListener('click',()=>openAgentModal());
 $('#heroAdd').addEventListener('click',()=>openAgentModal());
 bindAuthUI();
