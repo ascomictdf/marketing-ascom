@@ -731,14 +731,35 @@ a.open-btn{text-decoration:none}
 .fb-ind{font-size:10.5px;font-weight:700;color:var(--texto-suave);background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:6px;padding:2px 7px}
 
 /* CHECKLIST (cartão da etapa) */
-.ck-item{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:10px;margin-bottom:7px;font-size:13.5px;cursor:pointer}
-.ck-item input[type=checkbox]{width:17px;height:17px;flex:0 0 17px;cursor:pointer;accent-color:var(--ok)}
-.ck-item span{flex:1;min-width:0}
-.ck-item.done span{text-decoration:line-through;color:var(--texto-suave)}
-.ck-item .ico-mini{margin-left:auto;flex:0 0 auto}
+.ck-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ck-head .ck-title{font-size:13px;font-weight:700;color:var(--texto)}
+.ck-head .ck-count{margin-left:auto;font-size:12px;font-weight:800;color:var(--texto-suave);background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:20px;padding:2px 10px}
+.ck-head .ck-count.all{color:#16A34A;border-color:color-mix(in srgb,#16A34A 45%,var(--cinza-borda));background:color-mix(in srgb,#16A34A 12%,transparent)}
+.ck-progress{height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden;margin-bottom:12px}
+.ck-progress .fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#16a34a,#4ade80);transition:width .3s}
+.ck-list{display:flex;flex-direction:column;gap:8px}
+.ck-item{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:12px;padding:4px 6px 4px 4px;transition:border-color .15s,background .15s}
+.ck-item:hover{border-color:var(--azul-300)}
+.ck-item:focus-within{border-color:var(--azul-300);box-shadow:0 0 0 3px var(--azul-50)}
+.ck-item .ck-main{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:8px 8px;margin:0;border-radius:9px;cursor:pointer;font-size:14px;font-weight:600;color:var(--texto);line-height:1.4}
+.ck-item .ck-main input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.ck-item .ck-box{width:22px;height:22px;flex:0 0 22px;border-radius:7px;border:2px solid color-mix(in srgb,var(--texto-suave) 60%,transparent);display:grid;place-items:center;color:#fff;transition:.15s;background:var(--cinza-card)}
+.ck-item .ck-box svg{width:14px;height:14px;opacity:0;transform:scale(.5);transition:.15s}
+.ck-item .ck-main:hover .ck-box{border-color:#16A34A}
+.ck-item .ck-main input:focus-visible+.ck-box{outline:3px solid var(--azul-300);outline-offset:2px}
+.ck-item .ck-text{flex:1;min-width:0;overflow-wrap:anywhere}
+.ck-item.done{background:color-mix(in srgb,#16A34A 8%,var(--surface-2));border-color:color-mix(in srgb,#16A34A 30%,var(--cinza-borda))}
+.ck-item.done .ck-box{background:#16A34A;border-color:#16A34A}
+.ck-item.done .ck-box svg{opacity:1;transform:none}
+.ck-item.done .ck-text{text-decoration:line-through;color:var(--texto-suave);font-weight:500}
+.ck-item .ck-del{width:36px;height:36px;flex:0 0 36px;border-radius:10px;border:1px solid var(--cinza-borda);background:var(--cinza-card);color:var(--texto-suave);cursor:pointer;display:grid;place-items:center;transition:.15s}
+.ck-item .ck-del svg{width:18px;height:18px}
+.ck-item .ck-del:hover,.ck-item .ck-del:focus-visible{background:var(--vermelho);border-color:var(--vermelho);color:#fff;outline:none}
+.ck-empty{display:flex;align-items:center;gap:10px;padding:14px;border:1.5px dashed var(--cinza-borda);border-radius:12px;color:var(--texto-suave);font-size:13px;font-weight:600}
 .ck-add{display:flex;gap:8px;margin-top:10px}
-.ck-add input{flex:1;padding:10px 12px;border:1.5px solid var(--cinza-borda);border-radius:11px;font-size:13.5px;font-family:inherit;background:var(--cinza-card);color:var(--texto);outline:none}
-.ck-add input:focus{border-color:var(--azul-300)}
+.ck-add input{flex:1;min-width:0;padding:11px 13px;border:1.5px solid var(--cinza-borda);border-radius:12px;font-size:14px;font-family:inherit;background:var(--cinza-card);color:var(--texto);outline:none}
+.ck-add input:focus{border-color:var(--azul-300);box-shadow:0 0 0 3px var(--azul-50)}
+.ck-add .btn{flex:0 0 auto}
 
 /* status de sincronização / Supabase */
 .sync-badge{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:#c9d6e8;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 12px;margin-bottom:10px}
@@ -2394,7 +2415,7 @@ body.reconnect-on{overflow:hidden}
         <div class="ia-slot" id="iaEtapa"></div>
       </div>
       <div class="field">
-        <label>Checklist (lista de a fazer) <span class="hint" id="et-ckcount" style="font-weight:600"></span></label>
+        <div class="ck-head"><span class="ck-title">✓ Checklist (lista de a fazer)</span><span class="ck-count" id="et-ckcount"></span></div>
         <div id="et-cklist"></div>
         <div class="ck-add"><input type="text" id="et-ckinp" placeholder="Novo item da checklist…" /><button class="btn btn-dark btn-sm" id="et-ckadd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar</button></div>
       </div>
@@ -4992,8 +5013,14 @@ window.openEtapaModal=function(prId,etId){
 function renderEtapaChecklist(){
   const et=curEtapa();if(!et)return;et.checklist=et.checklist||[];
   const done=et.checklist.filter(i=>i.feito).length;
-  $('#et-ckcount').textContent=et.checklist.length?`· ${done}/${et.checklist.length} feitos`:'';
-  $('#et-cklist').innerHTML=et.checklist.map(i=>`<label class="ck-item ${i.feito?'done':''}"><input type="checkbox" data-ckid="${i.id}" ${i.feito?'checked':''} /><span>${esc(i.texto)}</span><button class="ico-mini danger" data-ckdel="${i.id}" title="Remover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></label>`).join('')||'<p class="hint" style="margin:0 0 4px">Nenhum item ainda. Adicione tarefas abaixo.</p>';
+  const total=et.checklist.length, pct=total?Math.round(done/total*100):0;
+  const cnt=$('#et-ckcount');cnt.textContent=total?`${done}/${total} feitos`:'0 itens';cnt.classList.toggle('all',!!total&&done===total);
+  const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2m-9 0v14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V6M10 11v6M14 11v6"/></svg>';
+  $('#et-cklist').innerHTML=total?`<div class="ck-progress" aria-hidden="true"><div class="fill" style="width:${pct}%"></div></div><div class="ck-list">`+et.checklist.map(i=>`<div class="ck-item ${i.feito?'done':''}">
+      <label class="ck-main"><input type="checkbox" data-ckid="${i.id}" ${i.feito?'checked':''} /><span class="ck-box">${CHECK}</span><span class="ck-text">${esc(i.texto)}</span></label>
+      <button type="button" class="ck-del" data-ckdel="${i.id}" title="Excluir item" aria-label="Excluir item: ${esc(i.texto)}">${TRASH}</button>
+    </div>`).join('')+'</div>':'<div class="ck-empty">Nenhum item ainda. Escreva abaixo e clique em Adicionar (ou Enter).</div>';
   $$('#et-cklist [data-ckid]').forEach(c=>c.addEventListener('change',()=>{const et=curEtapa();const it=et&&et.checklist.find(x=>x.id===c.dataset.ckid);if(it){it.feito=c.checked;save();renderEtapaChecklist();}}));
   $$('#et-cklist [data-ckdel]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();const et=curEtapa(),it=et&&et.checklist.find(x=>x.id===b.dataset.ckdel);if(et&&it)openConfirmDelete(it.texto,()=>{et.checklist=et.checklist.filter(x=>x.id!==b.dataset.ckdel);save();renderEtapaChecklist();toast('Item removido.','warn');},'Excluir item da checklist');}));
 }
