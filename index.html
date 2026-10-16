@@ -1102,7 +1102,34 @@ select.chip option{background:var(--cinza-card);color:var(--texto)}
 .agent-folder-chip:focus-visible,.pasta-chip:focus-visible{outline:2px solid var(--azul-300);outline-offset:2px}
 /* contador ("2 agentes") */
 .count-pill{font-size:12px;font-weight:700;color:var(--texto-suave);background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:20px;padding:4px 11px;white-space:nowrap}
-/* agentes: o seletor de área repetia as pastas logo abaixo */
+/* agentes: botão único de pastas */
+.folder-dd{position:relative}
+.folder-dd-btn{height:40px;display:inline-flex;align-items:center;gap:8px;padding:0 12px;border-radius:12px;border:1px solid var(--cinza-borda);background:var(--surface-2);color:var(--texto);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:border-color .15s,background .15s}
+.folder-dd-btn>svg:first-child{width:17px;height:17px;flex:0 0 17px;color:var(--texto-suave)}
+.folder-dd-btn .fd-label{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folder-dd-btn .fd-chev{width:15px;height:15px;color:var(--texto-suave);transition:transform .15s}
+.folder-dd.open .folder-dd-btn .fd-chev{transform:rotate(180deg)}
+.folder-dd-btn:hover,.folder-dd.open .folder-dd-btn{border-color:color-mix(in srgb,var(--azul-300) 60%,var(--cinza-borda))}
+.folder-dd-btn.filtered{background:color-mix(in srgb,var(--azul-300) 16%,var(--surface-2));border-color:color-mix(in srgb,var(--azul-300) 70%,transparent)}
+.folder-dd-btn.filtered>svg:first-child{color:var(--azul-300)}
+.folder-dd-btn:focus-visible{outline:2px solid var(--azul-300);outline-offset:2px}
+.folder-dd .cnt{min-width:20px;height:18px;padding:0 6px;border-radius:6px;background:var(--cinza-card);color:var(--texto-suave);font-size:11px;font-weight:800;display:inline-grid;place-items:center}
+.folder-dd-btn.filtered .cnt{background:var(--azul-300);color:#fff}
+.folder-dd-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:40;min-width:250px;max-width:min(320px,90vw);max-height:340px;overflow-y:auto;background:var(--cinza-card);border:1px solid var(--cinza-borda);border-radius:14px;box-shadow:var(--sombra-forte);padding:6px;animation:fadeUp .14s ease both}
+.folder-dd-menu[hidden]{display:none}
+.folder-dd-menu .fd-head{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--texto-suave);padding:6px 10px 4px}
+.fd-opt{width:100%;display:flex;align-items:center;gap:10px;padding:9px 10px;border:none;border-radius:9px;background:transparent;color:var(--texto);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-align:left}
+.fd-opt>svg,.fd-opt .fd-all{width:16px;height:16px;flex:0 0 16px;color:var(--texto-suave);font-size:13px;line-height:16px;text-align:center}
+.fd-opt .fd-name{flex:1;min-width:0;overflow-wrap:anywhere}
+.fd-opt:hover,.fd-opt:focus-visible{background:var(--surface-2);outline:none}
+.fd-opt.on{background:color-mix(in srgb,var(--azul-300) 16%,transparent);font-weight:800}
+.fd-opt.on>svg,.fd-opt.on .fd-all{color:var(--azul-300)}
+.fd-opt.on .cnt{background:var(--azul-300);color:#fff}
+.fd-sep{height:1px;background:var(--cinza-borda);margin:6px 4px}
+.fd-new{color:var(--azul-300);font-weight:700}
+.fd-new>svg{color:var(--azul-300)}
+body.readonly .fd-sep,body.readonly .fd-new{display:none!important}
+/* agentes: o seletor de área repetia as pastas */
 #areaFilter{display:none}
 @media(max-width:600px){.chips,.seg{max-width:100%}.chips .chip,.seg button{padding:0 11px}select.chip{flex:1 1 160px}}
 
@@ -1537,11 +1564,11 @@ body.reconnect-on{overflow:hidden}
         </div>
         <div class="toolbar">
           <div class="chips" id="catFilters"></div>
+          <div class="folder-dd" id="agentAreaFolders"></div>
           <div class="spacer"></div>
           <select id="areaFilter" class="chip"></select>
           <span class="count-pill" id="agentCount"></span>
         </div>
-        <div class="agent-area-folders" id="agentAreaFolders"></div>
         <div class="grid" id="agentGrid"></div>
       </section>
 
@@ -3641,20 +3668,41 @@ function renderAreaFilter(){
   sel.innerHTML=`<option value="todas">Todas as áreas</option>`+(sem?`<option value="sem">Sem área</option>`:'')+areas.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
   sel.value=filters.area;
 }
+// Pastas (áreas) dos agentes: um único botão que abre a lista de pastas
+const FOLDER_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>';
 function renderAgentAreaFolders(){
   const bar=$('#agentAreaFolders');if(!bar)return;
   const base=generalAgents().filter(a=>filters.cat==='todos'||a.cat===filters.cat);
   const areas=[...new Set([...(state.config.areas||[]),...base.map(a=>a.area)].map(a=>(a||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   const count=v=>v==='todas'?base.length:v==='sem'?base.filter(a=>!(a.area||'').trim()).length:base.filter(a=>(a.area||'').trim()===v).length;
-  const chip=(val,label,icon)=>`<div class="agent-folder-chip ${filters.area===val?'on':''}" data-afolder="${esc(val)}">${icon||''}${esc(label)}<span class="cnt">${count(val)}</span></div>`;
-  let html=chip('todas','Todas as áreas','');
-  areas.forEach(a=>{html+=chip(a,a,'');});
-  if(count('sem'))html+=chip('sem','Sem área','');
-  html+=`<div class="agent-folder-chip new-folder" id="newAgentAreaFolder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>Nova pasta</div>`;
-  bar.innerHTML=html;
-  $$('#agentAreaFolders [data-afolder]').forEach(c=>c.addEventListener('click',()=>{filters.area=c.dataset.afolder;renderAgents();}));
-  $('#newAgentAreaFolder')?.addEventListener('click',addAgentAreaFolder);
+  const opts=[{v:'todas',l:'Todas as áreas'},...areas.map(a=>({v:a,l:a}))];
+  if(count('sem'))opts.push({v:'sem',l:'Sem área'});
+  if(!opts.some(o=>o.v===filters.area))filters.area='todas';
+  const cur=opts.find(o=>o.v===filters.area);
+  const open=bar.classList.contains('open');
+  bar.innerHTML=`<button type="button" class="folder-dd-btn${filters.area!=='todas'?' filtered':''}" id="folderDdBtn" aria-haspopup="listbox" aria-expanded="${open}" aria-controls="folderDdMenu" title="Escolher pasta">
+      ${FOLDER_SVG}<span class="fd-label">${esc(cur.l)}</span><span class="cnt">${count(cur.v)}</span><svg class="fd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="folder-dd-menu" id="folderDdMenu" role="listbox" aria-label="Pastas de agentes"${open?'':' hidden'}>
+      <div class="fd-head">Pastas</div>
+      ${opts.map(o=>`<button type="button" class="fd-opt${o.v===filters.area?' on':''}" role="option" aria-selected="${o.v===filters.area}" data-afolder="${esc(o.v)}">${o.v==='todas'?'<span class="fd-all">▦</span>':FOLDER_SVG}<span class="fd-name">${esc(o.l)}</span><span class="cnt">${count(o.v)}</span></button>`).join('')}
+      <div class="fd-sep"></div>
+      <button type="button" class="fd-opt fd-new" id="newAgentAreaFolder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg><span class="fd-name">Nova pasta</span></button>
+    </div>`;
+  const btn=$('#folderDdBtn'), menu=$('#folderDdMenu');
+  const setOpen=v=>{bar.classList.toggle('open',v);menu.hidden=!v;btn.setAttribute('aria-expanded',v);if(v)(menu.querySelector('.fd-opt.on')||menu.querySelector('.fd-opt'))?.focus();};
+  btn.addEventListener('click',e=>{e.stopPropagation();setOpen(menu.hidden);});
+  btn.addEventListener('keydown',e=>{if(e.key==='ArrowDown'){e.preventDefault();setOpen(true);}});
+  $$('#agentAreaFolders [data-afolder]').forEach(o=>o.addEventListener('click',()=>{filters.area=o.dataset.afolder;bar.classList.remove('open');renderAgents();$('#folderDdBtn')?.focus();}));
+  menu.addEventListener('keydown',e=>{
+    const items=$$('.fd-opt',menu), i=items.indexOf(document.activeElement);
+    if(e.key==='ArrowDown'){e.preventDefault();items[Math.min(items.length-1,i+1)]?.focus();}
+    else if(e.key==='ArrowUp'){e.preventDefault();items[Math.max(0,i-1)]?.focus();}
+    else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();setOpen(false);btn.focus();}
+    else if(e.key==='Tab')setOpen(false);
+  });
+  $('#newAgentAreaFolder')?.addEventListener('click',()=>{bar.classList.remove('open');addAgentAreaFolder();});
 }
+document.addEventListener('click',e=>{const bar=$('#agentAreaFolders');if(bar&&bar.classList.contains('open')&&!bar.contains(e.target)){bar.classList.remove('open');const m=$('#folderDdMenu');if(m)m.hidden=true;$('#folderDdBtn')?.setAttribute('aria-expanded','false');}});
 function addAgentAreaFolder(){
   const v=prompt('Nome da nova pasta/área de agentes:','');
   if(v==null)return;
