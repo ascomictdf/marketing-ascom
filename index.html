@@ -1308,6 +1308,21 @@ body.readonly .fv-node .fn-status{pointer-events:none}
 .cc-card .cc-help{width:100%;margin-top:8px;min-height:54px;resize:vertical;font-size:13px}
 .cc-card .cc-help-label{display:block;font-size:11.5px;font-weight:700;color:var(--texto-suave);margin-top:9px}
 
+/* ===== NOTIFICAÇÕES NA TELA DO COMPUTADOR ===== */
+.notif-desktop{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--cinza-borda);font-size:12.5px;font-weight:700;color:var(--texto-suave);background:var(--surface-2)}
+.notif-desktop span{flex:1;min-width:0}
+.notif-desktop.ativo span{color:#16A34A}
+.notif-desktop.bloqueado span{color:var(--vermelho)}
+.notif-desktop .btn{padding:6px 12px}
+#cfgDesktopNotif .dn-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+#cfgDesktopNotif .dn-txt{flex:1;min-width:240px;display:flex;flex-direction:column;gap:5px}
+#cfgDesktopNotif .dn-txt b:first-child{font-size:15px;color:var(--texto)}
+#cfgDesktopNotif .dn-txt span{font-size:13px;color:var(--texto-suave);line-height:1.55}
+.dn-help{margin-top:14px;padding:12px 14px;border:1px solid var(--cinza-borda);border-left:4px solid var(--azul-300);border-radius:11px;background:var(--surface-2);font-size:13px;line-height:1.6;color:var(--texto)}
+.dn-help ol{margin:6px 0 6px 18px}
+.dn-help p{color:var(--texto-suave)}
+.dn-st.ativo{color:#16A34A}.dn-st.bloqueado{color:var(--vermelho)}
+
 /* ===== AVISO DE RASCUNHO ===== */
 .draft-overlay{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(7,18,40,.5)}
 .draft-overlay.show{display:flex;animation:fadeIn .15s ease}
@@ -1515,6 +1530,7 @@ body.reconnect-on{overflow:hidden}
           </button>
           <div class="notif-panel" id="notifPanel">
             <div class="notif-head"><b>Notificações</b><button class="notif-clear" id="notifClear">Limpar</button></div>
+            <div class="notif-desktop" id="notifDesktopBar"></div>
             <div class="notif-list" id="notifList"></div>
           </div>
         </div>
@@ -1851,6 +1867,7 @@ body.reconnect-on{overflow:hidden}
             </div>
           </div>
         </div>
+        <div class="cfg-card" id="cfgDesktopNotif" style="margin-bottom:20px"></div>
         <div class="cfg-card" id="cfgBrand" style="margin-bottom:20px"></div>
         <div class="cfg-grid">
           <div class="cfg-card" id="cfgPessoas"></div>
@@ -2107,7 +2124,7 @@ body.reconnect-on{overflow:hidden}
           <section class="doc-sec" id="doc-changelog">
             <h3>17. Histórico de versões</h3>
             <ul class="doc-log">
-              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Prompts dos agentes</b>: cartões redesenhados; cada campo mostra só o nome (ex.: "Número da edição") com um ícone <b>?</b> que mostra, ao passar o mouse, a explicação de como preenchê-lo (escrita no editor do prompt). <b>Tema escuro como padrão</b> (o ícone de sol/lua no topo alterna e a escolha fica salva no navegador). <b>Desempenho</b>: janelas sem efeito de desfoque (que derrubava a tela para ~14 quadros/s), listas grandes desenham só o que está visível, datas formatadas com cache e fluxograma com arrasto mais leve. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
+              <li><b>v2.5 — 14/10/2026</b><br><b>Admin Geral</b>: novo nível de acesso que altera login (e-mail), nome, senha e nível de acesso de todos os usuários (lápis em Configurações → Usuários e acessos). Atribuído a thiago.silverio@ictdf.org.br; mudanças de acesso valem na hora. <b>Reconexão</b>: quando o banco desconecta ou a sessão expira por inatividade, a tela fica embaçada com um botão de recarregar que reconecta. <b>Header mais limpo</b>: Importar, Exportar e Sair foram para Configurações. <b>Enquadramento</b>: cartões de tarefas, aprovação e agentes não cortam mais títulos, datas, "Revisado por" nem botões. <b>Campanhas em andamento</b>: ao vincular uma tarefa ou arte, só aparecem campanhas em andamento. <b>Notificações</b>: mover uma arte para Aprovado ou Em alteração gera notificação (também para quem estiver em outro navegador). <b>Esqueci minha senha</b>: corrigido — agora a pessoa cria a nova senha por um link (enviado por e-mail, se configurado, ou gerado pelo Admin Geral a partir do pedido, que chega como notificação). Também dá para trocar a senha logado em Configurações → Sua conta → Alterar minha senha. <b>Notificações na tela do computador</b>: com a permissão do navegador (sino → Ativar, ou Configurações), aprovações, alterações solicitadas, chamados de integração e pedidos de nova senha aparecem no canto inferior direito do Windows, mesmo com a plataforma minimizada. <b>Prompts dos agentes</b>: cartões redesenhados; cada campo mostra só o nome (ex.: "Número da edição") com um ícone <b>?</b> que mostra, ao passar o mouse, a explicação de como preenchê-lo (escrita no editor do prompt). <b>Tema escuro como padrão</b> (o ícone de sol/lua no topo alterna e a escolha fica salva no navegador). <b>Desempenho</b>: janelas sem efeito de desfoque (que derrubava a tela para ~14 quadros/s), listas grandes desenham só o que está visível, datas formatadas com cache e fluxograma com arrasto mais leve. <b>Proteção de rascunho</b>: ao fechar um formulário de criação ou edição (tarefa, arte, fluxo, agente, prompt, campanha, contato, usuário, senha) com informações não salvas — pelo X, Cancelar, clique fora ou Esc — a plataforma avisa que o rascunho será excluído e permite continuar editando. <b>Fluxos de projeto</b>: lista compacta e fluxograma em tela cheia que pode ser arrastado e ampliado. <b>Solicitação de alteração travada</b>: o texto escrito pelo revisor aparece no cartão da arte, sem edição, com data, hora e linha do tempo de todas as movimentações (protegido também no servidor).</li>
               <li><b>v2.4 — 24/08/2026</b><br><b>Tarefas e agentes mais flexíveis</b>: a tela de tarefas ganhou cards compactos, descrição somente no modal, criação/ordenação/renomeação/exclusão de colunas direto no quadro, além da lista agrupada por etapa. O cadastro de agentes agora permite adicionar prompts na criação, e os cards exibem atalhos para abrir o chat e os prompts quando existirem. A aprovação pública não exige login no link compartilhado. A integração Gemini/Gerar com IA foi retirada da interface.</li>
               <li><b>v2.3 — 27/06/2026</b><br><b>Contatos — setor e pastas</b>: o cadastro de contato ganhou o campo <b>Setor</b> (com sugestões dos setores já usados) e a opção de organizar os contatos em <b>pastas</b> — com filtro por pasta no topo e um gerenciador para criar, renomear e remover pastas.</li>
               <li><b>v2.2 — 27/06/2026</b><br><b>Lista de contatos</b>: nova seção para cadastrar contatos (nome, celular e observações), com busca e atalho para o WhatsApp. <b>Aprovação — quem revisou</b>: ao aprovar ou solicitar alteração pelo link, a pessoa informa o nome, que aparece no cartão da arte como "Revisado por: [nome]". <b>Link de aprovação</b>: a lista "Artes neste link" ficou mais alta, facilitando a seleção.</li>
@@ -3189,7 +3206,85 @@ const NOTIF_KEY='ictdf_hub_notifs';
 let notifs=[];
 function loadNotifs(){try{notifs=JSON.parse(localStorage.getItem(NOTIF_KEY)||'[]');}catch(e){notifs=[];}}
 function saveNotifs(){try{localStorage.setItem(NOTIF_KEY,JSON.stringify(notifs.slice(0,50)));}catch(e){}}
-function addNotif(n){notifs.unshift(Object.assign({id:id(),ts:Date.now(),read:false},n));saveNotifs();renderNotifs();}
+function addNotif(n){
+  const desktop=n.desktop!==false;delete n.desktop;
+  const item=Object.assign({id:id(),ts:Date.now(),read:false},n);
+  notifs.unshift(item);saveNotifs();renderNotifs();
+  if(desktop)showDesktopNotif(item);
+}
+/* ---- Notificações na tela do computador (canto inferior direito do Windows) ----
+   Usa a permissão de notificações do navegador; funciona com a plataforma aberta em alguma aba
+   (inclusive minimizada ou em segundo plano). A escolha fica salva neste navegador. */
+const DESKTOP_NOTIF_KEY='ictdf_desktop_notif';
+function desktopNotifSupported(){return typeof window.Notification==='function';}
+function desktopNotifWanted(){try{return localStorage.getItem(DESKTOP_NOTIF_KEY)!=='0';}catch(e){return true;}}
+function desktopNotifOn(){return desktopNotifSupported()&&Notification.permission==='granted'&&desktopNotifWanted();}
+function showDesktopNotif(n){
+  if(!desktopNotifOn()||REVIEW_MODE)return;
+  try{
+    const b=brand();
+    const dn=new Notification(n.titulo||'Hub de Agentes IA',{body:n.msg||'',icon:b.favicon||b.logo||DEFAULT_FAVICON,tag:n.id,lang:'pt-BR'});
+    dn.onclick=()=>{
+      try{window.focus();}catch(e){}
+      if(n.tipo==='aprovado'||n.tipo==='alteracao')go('aprovacao');
+      else if(n.tipo==='integracao')go('tarefas');
+      else if(n.tipo==='senha')go('config');
+      dn.close();
+    };
+  }catch(e){console.error(e);}
+}
+async function enableDesktopNotif(){
+  if(!desktopNotifSupported()){toast('Este navegador não suporta notificações na tela.','warn');return;}
+  if(Notification.permission==='denied'){openDesktopNotifHelp();renderDesktopNotifUI();return;}
+  let perm=Notification.permission;
+  if(perm!=='granted'){try{perm=await Notification.requestPermission();}catch(e){perm='denied';}}
+  if(perm==='granted'){
+    try{localStorage.setItem(DESKTOP_NOTIF_KEY,'1');}catch(e){}
+    showDesktopNotif({id:'teste-'+Date.now(),titulo:'Notificações ativadas ✅',msg:'Você vai receber os avisos da plataforma aqui, no canto da tela.'});
+    toast('Notificações na tela do computador ativadas.','ok');
+  }else if(perm==='denied')openDesktopNotifHelp();
+  else toast('Permissão não concedida. Clique de novo e escolha "Permitir".','info');
+  renderDesktopNotifUI();
+}
+function disableDesktopNotif(){try{localStorage.setItem(DESKTOP_NOTIF_KEY,'0');}catch(e){}renderDesktopNotifUI();toast('Notificações na tela do computador desativadas.','info');}
+let _dnHelpOpen=false;
+function openDesktopNotifHelp(){
+  _dnHelpOpen=true;$('#notifPanel')?.classList.remove('open');go('config');
+  setTimeout(()=>{const el=$('#cfgDesktopNotif');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},120);
+}
+const DN_HELP_HTML='<div class="dn-help"><b>Como liberar as notificações</b><ol><li>Clique no ícone de <b>cadeado</b> (ou de ajustes) à esquerda do endereço do site, na barra do navegador.</li><li>Em <b>Notificações</b>, escolha <b>Permitir</b>.</li><li>Recarregue a página (F5) e clique em <b>Ativar</b>.</li></ol><p>Se ainda não aparecer no canto da tela, confira no Windows: <b>Configurações → Sistema → Notificações</b> — deixe ativadas as notificações do <b>Chrome</b> (ou Edge) e desligue o <b>Não perturbe</b>.</p></div>';
+function desktopNotifStatus(){
+  if(!desktopNotifSupported())return 'indisponivel';
+  if(Notification.permission==='denied')return 'bloqueado';
+  if(Notification.permission==='granted'&&desktopNotifWanted())return 'ativo';
+  return 'inativo';
+}
+function renderDesktopNotifUI(){
+  const st=desktopNotifStatus();
+  const bar=$('#notifDesktopBar');
+  if(bar){
+    bar.style.display=st==='indisponivel'?'none':'';
+    bar.className='notif-desktop '+st;
+    bar.innerHTML=st==='ativo'
+      ?'<span>🖥️ Aparecendo também na tela do computador</span><button type="button" class="notif-clear" id="notifDeskOff">Desativar</button>'
+      :st==='bloqueado'
+        ?'<span>🔕 Bloqueadas pelo navegador</span><button type="button" class="notif-clear" id="notifDeskHelp">Como liberar</button>'
+        :'<span>🖥️ Receber na tela do computador</span><button type="button" class="btn btn-primary btn-sm" id="notifDeskOn">Ativar</button>';
+    $('#notifDeskOn')?.addEventListener('click',e=>{e.stopPropagation();enableDesktopNotif();});
+    $('#notifDeskOff')?.addEventListener('click',e=>{e.stopPropagation();disableDesktopNotif();});
+    $('#notifDeskHelp')?.addEventListener('click',e=>{e.stopPropagation();openDesktopNotifHelp();});
+  }
+  const cfg=$('#cfgDesktopNotif');
+  if(cfg){
+    const label={ativo:'Ativadas',inativo:'Desativadas',bloqueado:'Bloqueadas pelo navegador',indisponivel:'Não suportadas neste navegador'}[st];
+    cfg.innerHTML=`<div class="dn-row"><div class="dn-txt"><b>🖥️ Notificações na tela do computador</b><span>Aprovações, alterações solicitadas, chamados de integração e pedidos de nova senha aparecem no canto inferior direito da tela — mesmo com a plataforma minimizada (ela precisa estar aberta em alguma aba). Status: <b class="dn-st ${st}">${label}</b></span></div>
+      ${st==='ativo'?'<button type="button" class="btn btn-ghost btn-sm" id="cfgDeskTest">Testar</button><button type="button" class="btn btn-ghost btn-sm" id="cfgDeskOff">Desativar</button>':st==='bloqueado'?'<button type="button" class="btn btn-primary btn-sm" id="cfgDeskOn">Tentar de novo</button>':st==='inativo'?'<button type="button" class="btn btn-primary btn-sm" id="cfgDeskOn">Ativar</button>':''}</div>`;
+    $('#cfgDeskOn')?.addEventListener('click',enableDesktopNotif);
+    $('#cfgDeskOff')?.addEventListener('click',disableDesktopNotif);
+    if(st==='bloqueado'||_dnHelpOpen)cfg.insertAdjacentHTML('beforeend',DN_HELP_HTML);
+    $('#cfgDeskTest')?.addEventListener('click',()=>showDesktopNotif({id:'teste-'+Date.now(),titulo:'Teste de notificação',msg:'Se você está vendo isto no canto da tela, está tudo certo! 🎉'}));
+  }
+}
 function notifyAprovDecision(p){
   if(!p)return;
   const quem=p.revisadoPor?` por ${p.revisadoPor}`:'';
@@ -5261,7 +5356,7 @@ function aprovTimelineHTML(p){
 }
 function notifyAprovMove(p,ns){
   if(ns!=='aprovado'&&ns!=='alteracao')return;
-  addNotif({tipo:ns,titulo:p.titulo,msg:(ns==='aprovado'?'Arte movida para Aprovado':'Arte movida para Em alteração')+' por '+currentAuthorName()});
+  addNotif({tipo:ns,titulo:p.titulo,msg:(ns==='aprovado'?'Arte movida para Aprovado':'Arte movida para Em alteração')+' por '+currentAuthorName(),desktop:false}); // ação da própria pessoa: só no sino
 }
 function setPostApproval(p,ns){
   p.aprov=ns;
@@ -5812,6 +5907,7 @@ function renderConfig(){
   const cfg=state.config;
   renderSupabaseConfig();
   renderSessionCard();
+  renderDesktopNotifUI();
   renderUsuariosConfig();
   renderBrandConfig();
   // Tipos de demanda
@@ -6626,7 +6722,7 @@ async function boot(){
     }
   }
   applyBrand();
-  loadNotifs();renderNotifs();buildAprovSnap();startPolling();startIntegrationPolling();applyReadonly();updateOpUI();
+  loadNotifs();renderNotifs();renderDesktopNotifUI();buildAprovSnap();startPolling();startIntegrationPolling();applyReadonly();updateOpUI();
   renderStats();renderRecent();renderUpcoming();renderAreaFilter();renderAgents();renderCampanhas();renderBadges();
   if(REVIEW_MODE)enterReviewMode();
   else if(Auth.loggedIn()){setTimeout(shrinkStoredImages,1500);checkResetRequests();setInterval(checkResetRequests,120000);}
