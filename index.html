@@ -1071,6 +1071,41 @@ body.review-on{overflow:hidden}
 .intg-log .lg{display:flex;gap:9px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--cinza-borda)}
 .intg-log .lg .t{color:var(--texto-suave);font-size:11px;white-space:nowrap}
 
+/* ===== FILTROS — visual unificado em todas as telas ===== */
+.toolbar{gap:10px}
+/* grupos de opções (Todos/Interno/Externo, status da campanha, Kanban/Lista, abas) = controle segmentado */
+.chips,.seg,.prod-tabs{display:inline-flex;flex-wrap:wrap;align-items:center;gap:2px;padding:3px;margin:0;background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:12px}
+.prod-tabs{margin-bottom:20px}
+.chips .chip,.seg button,.prod-tab{height:34px;padding:0 14px;border:none;border-radius:9px;background:transparent;color:var(--texto-suave);font-family:inherit;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:none;transition:background .15s,color .15s}
+.chips .chip:hover,.seg button:hover,.prod-tab:hover{color:var(--texto);background:color-mix(in srgb,var(--cinza-card) 55%,transparent);border-color:transparent}
+.chips .chip.active,.chips .chip.cat-externo.active,.chips .chip.st-andamento.active,.chips .chip.st-encerrada.active,.seg button.on,.prod-tab.on{background:var(--cinza-card);color:var(--texto);box-shadow:0 1px 2px rgba(0,0,0,.18),0 0 0 1px var(--cinza-borda)}
+.chips .chip .dot{width:8px;height:8px}
+.chips .chip:focus-visible,.seg button:focus-visible,.prod-tab:focus-visible{outline:2px solid var(--azul-300);outline-offset:1px}
+/* seletores e datas */
+select.chip,input.chip{-webkit-appearance:none;appearance:none;height:38px;padding:0 34px 0 12px;border:1px solid var(--cinza-borda);border-radius:10px;background-color:var(--cinza-card);color:var(--texto);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;box-shadow:none;max-width:100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;background-size:15px}
+input.chip{padding:0 10px;background-image:none;cursor:text}
+.date-filter .date-input{width:150px;border-radius:10px}
+select.chip:hover,input.chip:hover{border-color:color-mix(in srgb,var(--azul-300) 60%,var(--cinza-borda));color:var(--texto)}
+select.chip:focus,input.chip:focus{outline:none;border-color:var(--azul-300);box-shadow:0 0 0 3px var(--azul-50)}
+select.chip option{background:var(--cinza-card);color:var(--texto)}
+.date-filter{gap:6px}
+/* pastas (áreas dos agentes, pastas de contatos) = etiquetas leves */
+.agent-area-folders,.pastas-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 18px}
+.agent-folder-chip,.pasta-chip{height:32px;padding:0 12px;border-radius:9px;border:1px solid var(--cinza-borda);background:transparent;color:var(--texto-suave);font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px;cursor:pointer;box-shadow:none;transition:background .15s,color .15s,border-color .15s}
+.agent-folder-chip:hover,.pasta-chip:hover{color:var(--texto);border-color:color-mix(in srgb,var(--azul-300) 55%,var(--cinza-borda));background:var(--surface-2)}
+.agent-folder-chip.on,.pasta-chip.on{background:color-mix(in srgb,var(--azul-300) 16%,transparent);border-color:color-mix(in srgb,var(--azul-300) 70%,transparent);color:var(--texto);box-shadow:none}
+.agent-folder-chip .cnt,.pasta-chip .cnt{min-width:20px;height:18px;padding:0 6px;border-radius:6px;background:var(--surface-2);color:var(--texto-suave);font-size:11px;font-weight:800;display:inline-grid;place-items:center}
+.agent-folder-chip.on .cnt,.pasta-chip.on .cnt{background:var(--azul-300);color:#fff}
+.agent-folder-chip.new-folder,.pasta-chip.newp{border-style:dashed;color:var(--texto-suave)}
+.agent-folder-chip.new-folder:hover,.pasta-chip.newp:hover{color:var(--azul-300);border-color:var(--azul-300);background:transparent}
+.agent-folder-chip:focus-visible,.pasta-chip:focus-visible{outline:2px solid var(--azul-300);outline-offset:2px}
+/* contador ("2 agentes") */
+.count-pill{font-size:12px;font-weight:700;color:var(--texto-suave);background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:20px;padding:4px 11px;white-space:nowrap}
+/* agentes: o seletor de área repetia as pastas logo abaixo */
+#areaFilter{display:none}
+@media(max-width:600px){.chips,.seg{max-width:100%}.chips .chip,.seg button{padding:0 11px}select.chip{flex:1 1 160px}}
+
 /* ===== DESEMPENHO ===== */
 /* Sem desfoque (backdrop-filter) atrás de janelas: medido, ele derrubava a tela de 60 para ~14 quadros/s
    enquanto qualquer janela estava aberta. A única exceção é a tela de reconexão (rara e estática). */
@@ -3612,8 +3647,8 @@ function renderAgentAreaFolders(){
   const areas=[...new Set([...(state.config.areas||[]),...base.map(a=>a.area)].map(a=>(a||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   const count=v=>v==='todas'?base.length:v==='sem'?base.filter(a=>!(a.area||'').trim()).length:base.filter(a=>(a.area||'').trim()===v).length;
   const chip=(val,label,icon)=>`<div class="agent-folder-chip ${filters.area===val?'on':''}" data-afolder="${esc(val)}">${icon||''}${esc(label)}<span class="cnt">${count(val)}</span></div>`;
-  let html=chip('todas','Todas as áreas','📁 ');
-  areas.forEach(a=>{html+=chip(a,a,'📂 ');});
+  let html=chip('todas','Todas as áreas','');
+  areas.forEach(a=>{html+=chip(a,a,'');});
   if(count('sem'))html+=chip('sem','Sem área','');
   html+=`<div class="agent-folder-chip new-folder" id="newAgentAreaFolder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>Nova pasta</div>`;
   bar.innerHTML=html;
@@ -4241,8 +4276,8 @@ function renderContatoPastasBar(){
   const all=state.contatos||[];
   const count=v=>v==='todas'?all.length:v==='sem'?all.filter(c=>!c.pastaId).length:all.filter(c=>c.pastaId===v).length;
   const chip=(val,label,icon)=>`<div class="pasta-chip ${contatoPastaFilter===val?'on':''}" data-pfilter="${val}">${icon||''}${esc(label)}<span class="cnt">${count(val)}</span></div>`;
-  let html=chip('todas','Todos','📇 ');
-  contatoPastas().forEach(p=>{html+=chip(p.id,p.nome,'📁 ');});
+  let html=chip('todas','Todos','');
+  contatoPastas().forEach(p=>{html+=chip(p.id,p.nome,'');});
   if(count('sem')||contatoPastas().length)html+=chip('sem','Sem pasta','');
   html+=`<div class="pasta-chip newp" id="quickNewPasta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>Nova pasta</div>`;
   bar.innerHTML=html;
