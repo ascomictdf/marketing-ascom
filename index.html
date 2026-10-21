@@ -1102,6 +1102,7 @@ select.chip option{background:var(--cinza-card);color:var(--texto)}
 .agent-folder-chip:focus-visible,.pasta-chip:focus-visible{outline:2px solid var(--azul-300);outline-offset:2px}
 /* contador ("2 agentes") */
 .count-pill{font-size:12px;font-weight:700;color:var(--texto-suave);background:var(--surface-2);border:1px solid var(--cinza-borda);border-radius:20px;padding:4px 11px;white-space:nowrap}
+select.chip.filtered{border-color:color-mix(in srgb,var(--azul-300) 70%,transparent);background-color:color-mix(in srgb,var(--azul-300) 14%,var(--cinza-card))}
 /* agentes: botão único de pastas */
 .folder-dd{position:relative}
 .folder-dd-btn{height:40px;display:inline-flex;align-items:center;gap:8px;padding:0 12px;border-radius:12px;border:1px solid var(--cinza-borda);background:var(--surface-2);color:var(--texto);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:border-color .15s,background .15s}
@@ -1723,6 +1724,7 @@ body.reconnect-on{overflow:hidden}
           </div>
           <select id="tarCampFilter" class="chip"></select>
           <select id="tarPrioFilter" class="chip"><option value="todas">Todas prioridades</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
+          <select id="tarRespFilter" class="chip" title="Filtrar por responsável" aria-label="Filtrar por responsável"></select>
           <select id="tarSortFilter" class="chip" title="Reorganizar tarefas"><option value="recentes">↕ Mais recentes</option><option value="prazo">↕ Data / prazo (mais próximo)</option><option value="titulo">↕ Nome (A→Z)</option><option value="prioridade">↕ Prioridade (alta→baixa)</option><option value="campanha">↕ Campanha (A→Z)</option></select>
           <div class="date-filter">
             <select id="tarDateFilter" class="chip">
@@ -3467,7 +3469,7 @@ let currentCalMonth=new Date();
 let calFilterStatus='todos', calFilterCanal='todos', calDateMode='todos', calDateStart='', calDateEnd='', calCollapsed=false, calShowAll=false, calRenderedCampId=null;
 // novas views
 let gcalView='agenda', gcalMonth=new Date(), gcalCamp='todas', gcalAprov='todos', gcalSort='data', gcalDateMode='todos', gcalDateStart='', gcalDateEnd='';
-let tarView='kanban', tarCamp='todas', tarPrio='todas', tarSort='recentes', tarDateMode='todos', tarDateStart='', tarDateEnd='';
+let tarView='kanban', tarCamp='todas', tarPrio='todas', tarResp='todos', tarSort='recentes', tarDateMode='todos', tarDateStart='', tarDateEnd='';
 let aprView='kanban', aprCamp='todas', aprStatus='todos', aprSort='data', aprDateMode='todos', aprDateStart='', aprDateEnd='';
 let fluxCamp='todas', fluxSort='recentes';
 
@@ -4223,11 +4225,35 @@ function tarefaSortCmp(a,b){
   else if(tarSort==='campanha'){const an=a.campanhaId?((campById(a.campanhaId)||{}).nome||'').toLowerCase():'￿';const bn=b.campanhaId?((campById(b.campanhaId)||{}).nome||'').toLowerCase():'￿';r=an.localeCompare(bn);}
   return r!==0?r:(a.prazo||'￿').localeCompare(b.prazo||'￿')||((a.titulo||'').toLowerCase().localeCompare((b.titulo||'').toLowerCase()))||(b.createdAt||'').localeCompare(a.createdAt||''); // desempate: data, nome e mais recentes
 }
+// filtro por responsável: 'todos' | 'eu' (minhas tarefas) | 'sem' | nome da pessoa
+function tarefaMatchesResp(t){
+  if(tarResp==='todos')return true;
+  const r=normNome(t.responsavel);
+  if(tarResp==='sem')return !r;
+  if(tarResp==='eu')return !!r&&meusNomes().has(r);
+  return r===normNome(tarResp);
+}
+function renderTarRespFilter(){
+  const sel=$('#tarRespFilter');if(!sel)return;
+  const nomes=new Map();
+  [...pessoas(),...(state.tarefas||[]).map(t=>t.responsavel)].forEach(n=>{const k=normNome(n);if(k&&!nomes.has(k))nomes.set(k,(n||'').trim());});
+  const lista=[...nomes.values()].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const conta=f=>(state.tarefas||[]).filter(f).length;
+  const temEu=meusNomes().size>0;
+  if(tarResp!=='todos'&&tarResp!=='eu'&&tarResp!=='sem'&&!nomes.has(normNome(tarResp)))tarResp='todos';
+  sel.innerHTML=`<option value="todos">👤 Todos os responsáveis</option>`+
+    (temEu?`<option value="eu">⭐ Minhas tarefas (${conta(t=>meusNomes().has(normNome(t.responsavel)))})</option>`:'')+
+    lista.map(n=>`<option value="${esc(n)}">${esc(n)} (${conta(t=>normNome(t.responsavel)===normNome(n))})</option>`).join('')+
+    `<option value="sem">Sem responsável (${conta(t=>!normNome(t.responsavel))})</option>`;
+  sel.value=tarResp;
+  sel.classList.toggle('filtered',tarResp!=='todos');
+}
 function tarefasFiltered(){
   const q=filters.search.toLowerCase().trim();
   return (state.tarefas||[]).filter(t=>
     (tarCamp==='todas'||(tarCamp==='sem'?!t.campanhaId:t.campanhaId===tarCamp))&&
     (tarPrio==='todas'||t.prioridade===tarPrio)&&
+    tarefaMatchesResp(t)&&
     inDateRange(tarefaDateKey(t),tarDateMode,tarDateStart,tarDateEnd)&&
     tarefaMatchesQuery(t,q)
   ).sort(tarefaSortCmp);
@@ -4360,6 +4386,7 @@ function renderTarefas(){
   renderBadges();
   $('#tarCampFilter').innerHTML=campSelectHTML();$('#tarCampFilter').value=tarCamp;
   $('#tarPrioFilter').value=tarPrio;
+  renderTarRespFilter();
   $('#tarSortFilter').value=tarSort;
   syncDateControls('tar',tarDateMode,tarDateStart,tarDateEnd);
   $$('#tarViewToggle button').forEach(b=>b.classList.toggle('on',b.dataset.tv===tarView));
@@ -4467,6 +4494,7 @@ $('#addTarefaBtn').addEventListener('click',()=>openTarefaModal());
 $$('#tarViewToggle button').forEach(b=>b.addEventListener('click',()=>{tarView=b.dataset.tv;renderTarefas();}));
 $('#tarCampFilter').addEventListener('change',e=>{tarCamp=e.target.value;renderTarefas();});
 $('#tarPrioFilter').addEventListener('change',e=>{tarPrio=e.target.value;renderTarefas();});
+$('#tarRespFilter').addEventListener('change',e=>{tarResp=e.target.value;renderTarefas();});
 $('#tarSortFilter').addEventListener('change',e=>{tarSort=e.target.value;renderTarefas();});
 $('#tarDateFilter').addEventListener('change',e=>{tarDateMode=e.target.value;renderTarefas();});
 $('#tarDateStart').addEventListener('input',e=>{tarDateStart=e.target.value;renderTarefas();});
