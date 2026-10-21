@@ -2357,7 +2357,7 @@ body.reconnect-on{overflow:hidden}
       <p id="confirmIntro" style="font-size:14.5px;line-height:1.55;color:var(--texto)">Esta ação é <b>permanente</b> e não pode ser desfeita. Para confirmar, digite o nome abaixo exatamente como está:</p>
       <div class="confirm-aviso" id="confirmAviso" style="display:none"></div>
       <div class="confirm-name" id="confirmName"></div>
-      <div class="field"><input type="text" id="confirmInput" placeholder="Digite para confirmar" autocomplete="off" /></div>
+      <div class="field" id="confirmInputField"><input type="text" id="confirmInput" placeholder="Digite para confirmar" autocomplete="off" /></div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" data-xclose>Cancelar</button>
@@ -6584,9 +6584,12 @@ function openConfirmDelete(nome,onConfirm,titulo,aviso,opts){
   if(aviso){av.style.display='';av.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex:0 0 18px;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span>'+aviso+'</span>';}
   else av.style.display='none';
   const inp=$('#confirmInput');inp.value='';
-  btn.disabled=true;
+  // opts.simple: só um botão de confirmação (sem digitar o nome)
+  $('#confirmInputField').style.display=opts.simple?'none':'';
+  if(opts.simple&&!opts.intro)$('#confirmIntro').innerHTML='Tem certeza que deseja excluir? Esta ação é <b>permanente</b> e não pode ser desfeita.';
+  btn.disabled=!opts.simple;
   $('#confirmModal').classList.add('open');
-  setTimeout(()=>inp.focus(),100);
+  setTimeout(()=>(opts.simple?btn:inp).focus(),100);
 }
 function closeConfirmModal(){$('#confirmModal').classList.remove('open');confirmCb=null;}
 $('#confirmInput').addEventListener('input',function(){
@@ -6626,7 +6629,7 @@ document.body.addEventListener('click',e=>{
   if(pe){const f=findPost(pe.dataset.postedit);if(f)openPostModal(f.campId,f.p);return;}
   const apo=t.closest('[data-aprovopen]');
   if(apo&&!t.closest('button,a,select,input,textarea')){const f=findPost(apo.dataset.aprovopen);if(f)openPostModal(f.campId,f.p);return;}
-  if(pdl){const f=findPost(pdl.dataset.postdel);if(f)openConfirmDelete(f.p.titulo,()=>{const store=postStore(f.campId);const i=store?store.indexOf(f.p):-1;if(i>=0)store.splice(i,1);save();syncPosts();toast('Arte removida.','warn');},'Excluir arte');return;}
+  if(pdl){const f=findPost(pdl.dataset.postdel);if(f)openConfirmDelete(f.p.titulo,()=>{const store=postStore(f.campId);const i=store?store.indexOf(f.p):-1;if(i>=0)store.splice(i,1);save();syncPosts();toast('Arte removida.','warn');},'Excluir arte',null,{simple:true,btnLabel:'Excluir arte'});return;}
   const te=t.closest('[data-taredit]'), tdl=t.closest('[data-tardel]'), topen=t.closest('[data-taskopen]');
   if(tdl){const tk=tarefaById(tdl.dataset.tardel);if(tk)openConfirmDelete(tk.titulo,()=>{state.tarefas=state.tarefas.filter(x=>x.id!==tk.id);save();renderTarefas();toast('Tarefa excluída.','warn');},'Excluir tarefa');return;}
   if(te){openTarefaModal(tarefaById(te.dataset.taredit));return;}
