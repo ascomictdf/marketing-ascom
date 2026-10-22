@@ -261,6 +261,11 @@ async function call(handler, method, body, cookie) {
   assert.equal(changedOwn.statusCode, 200, 'usuario troca a propria senha');
   assert.equal((await call(login, 'POST', { email: 'viewer@ictdf.org.br', password: 'minha2026' })).statusCode, 200);
 
+  // ===== Arte em producao nao entra na aprovacao pelo link =====
+  await call(state, 'PUT', { data: { agents: [], campanhas: [], posts: [{ id: 'pp', titulo: 'Arte em producao', aprov: 'producao' }] } }, adminCookie);
+  const prodReview = await call(review, 'POST', { postId: 'pp', status: 'aprovado', revisor: 'Diretoria' });
+  assert.equal(prodReview.statusCode, 409, 'arte em producao nao pode ser aprovada pelo link');
+
   // ===== Historico de aprovacao travado =====
   await call(state, 'PUT', { data: { agents: [], campanhas: [], posts: [{ id: 'p2', titulo: 'Arte 2', aprov: 'pendente' }] } }, adminCookie);
   const noComment = await call(review, 'POST', { postId: 'p2', status: 'alteracao', revisor: 'Diretoria' });

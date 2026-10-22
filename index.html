@@ -621,10 +621,12 @@ a.open-btn{text-decoration:none}
 /* status de aprovação (badge) */
 .aprov-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px}
 .aprov-badge .dot{width:7px;height:7px;border-radius:50%}
+.aprov-badge.producao{background:#f1ebfe;color:#7C3AED}.aprov-badge.producao .dot{background:#8B5CF6}
 .aprov-badge.enviar{background:#eaf0fb;color:#2E5BBE}.aprov-badge.enviar .dot{background:#2E5BBE}
 .aprov-badge.pendente{background:#fef3e2;color:#b45309}.aprov-badge.pendente .dot{background:#F59E0B}
 .aprov-badge.alteracao{background:#fde7ec;color:#be123c}.aprov-badge.alteracao .dot{background:#E11D48}
 .aprov-badge.aprovado{background:#e7f7ee;color:#16A34A}.aprov-badge.aprovado .dot{background:#16A34A}
+[data-theme="dark"] .aprov-badge.producao{background:rgba(139,92,246,.18);color:#c4b5fd}
 [data-theme="dark"] .aprov-badge.enviar{background:rgba(46,91,190,.18);color:#9cc0ff}
 [data-theme="dark"] .aprov-badge.pendente{background:rgba(245,158,11,.16);color:#f6b545}
 [data-theme="dark"] .aprov-badge.alteracao{background:rgba(225,29,72,.16);color:#fb7185}
@@ -1992,7 +1994,7 @@ body.reconnect-on{overflow:hidden}
 
           <section class="doc-sec" id="doc-aprovacao">
             <h3>7. Aprovação de artes</h3>
-            <p>Quadro para acompanhar o fluxo de aprovação, em <b>Kanban</b> ou <b>Lista</b>. As colunas são os status: <b>Enviar para aprovação</b>, <b>Pendente de aprovação</b>, <b>Em alteração</b> e <b>Aprovado</b>.</p>
+            <p>Quadro para acompanhar o fluxo de aprovação, em <b>Kanban</b> ou <b>Lista</b>. As colunas são os status: <b>Em produção</b> (artes ainda sendo feitas — não entram no link de aprovação; o botão de nova arte fica nesta coluna), <b>Enviar para aprovação</b>, <b>Pendente de aprovação</b>, <b>Em alteração</b> e <b>Aprovado</b>.</p>
             <ul>
               <li>Reúne <b>todas as artes</b> — de campanhas e avulsas.</li>
               <li><b>Integração:</b> arrastar um cartão entre colunas (ou trocar pelo seletor na Lista) muda o status de aprovação <b>também no calendário editorial</b>, automaticamente.</li>
@@ -2405,7 +2407,7 @@ body.reconnect-on{overflow:hidden}
         </div>
         <div class="field">
           <label>Status de aprovação</label>
-          <select id="po-aprov"><option value="enviar">Enviar para aprovação</option><option value="pendente">Pendente de aprovação</option><option value="alteracao">Em alteração</option><option value="aprovado">Aprovado</option></select>
+          <select id="po-aprov"><option value="producao">Em produção</option><option value="enviar">Enviar para aprovação</option><option value="pendente">Pendente de aprovação</option><option value="alteracao">Em alteração</option><option value="aprovado">Aprovado</option></select>
         </div>
       </div>
       <div class="field">
@@ -3622,7 +3624,7 @@ function agentCampNames(a){return agentCampanhas(a).map(c=>c.nome)}
 function agentCampaignText(a){const names=agentCampNames(a);return names.length?names.join(', '):'Nenhuma campanha'}
 function agentPrimaryCamp(a){return agentCampanhas(a)[0]||null}
 // ----- aprovação de artes -----
-const APROV_COLS=[{id:'enviar',nome:'Enviar para aprovação',cor:'#2E5BBE'},{id:'pendente',nome:'Pendente de aprovação',cor:'#F59E0B'},{id:'alteracao',nome:'Em alteração',cor:'#E11D48'},{id:'aprovado',nome:'Aprovado',cor:'#16A34A'}];
+const APROV_COLS=[{id:'producao',nome:'Em produção',cor:'#8B5CF6'},{id:'enviar',nome:'Enviar para aprovação',cor:'#2E5BBE'},{id:'pendente',nome:'Pendente de aprovação',cor:'#F59E0B'},{id:'alteracao',nome:'Em alteração',cor:'#E11D48'},{id:'aprovado',nome:'Aprovado',cor:'#16A34A'}];
 function aprovLabel(s){return (APROV_COLS.find(c=>c.id===s)||{}).nome||'Enviar para aprovação'}
 function aprovColor(s){return (APROV_COLS.find(c=>c.id===s)||{}).cor||'#2E5BBE'}
 // ----- posts: store geral + campanhas -----
@@ -5496,13 +5498,13 @@ function renderAprov(){
   if(aprView==='kanban'){
     board.innerHTML=`<p class="kanban-hint">Arraste os cartões entre as colunas — o status muda também no calendário editorial.</p><div class="kanban">`+APROV_COLS.map(col=>{
       const items=list.filter(x=>x.p.aprov===col.id);
-      const add=col.id==='enviar'?`<button class="btn btn-ghost btn-sm aprov-col-add" data-apradd="${col.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar nova arte</button>`:'';
+      const add=col.id==='producao'?`<button class="btn btn-ghost btn-sm aprov-col-add" data-apradd="${col.id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar nova arte</button>`:'';
       return `<div class="kcol" data-kcol="${col.id}"><div class="kcol-head"><span class="kdot" style="background:${col.cor}"></span>${col.nome}<span class="kcnt">${items.length}</span></div>${add}${items.map(aprovCardHTML).join('')||'<p class="hint" style="margin:4px 4px 2px">— vazio —</p>'}</div>`;
     }).join('')+`</div>`;
     bindKanbanDnD(board,(pid,ns)=>moveAprov(pid,ns));
     $$('#aprovBoard [data-apradd]').forEach(b=>b.addEventListener('click',()=>openPostModal(aprCamp!=='todas'&&aprCamp!=='sem'?aprCamp:'',null,null,{aprov:b.dataset.apradd})));
   }else{
-    if(!list.length){board.innerHTML=`<div class="empty"><div class="big">🖼️</div><h3>Nenhuma arte</h3><p>Crie artes aqui ou no calendário editorial para acompanhá-las nos dois lugares.</p><button class="btn btn-primary" onclick="openPostModal('',null,null,{aprov:'enviar'})">Nova arte</button></div>`;return;}
+    if(!list.length){board.innerHTML=`<div class="empty"><div class="big">🖼️</div><h3>Nenhuma arte</h3><p>Crie artes aqui ou no calendário editorial para acompanhá-las nos dois lugares.</p><button class="btn btn-primary" onclick="openPostModal('',null,null,{aprov:'producao'})">Nova arte</button></div>`;return;}
     board.innerHTML=`<div class="tlist">`+list.map(x=>{
       const p=x.p,camp=x.campId?campById(x.campId):null;
       const req=lastChangeRequest(p);return `<div class="trow" style="--kc:${aprovColor(p.aprov)}" data-aprovopen="${p.id}" title="Clique para abrir a arte"><div class="tr-main"><div class="tr-title">${esc(p.titulo)}</div><div class="tr-meta">${camp?`<span class="kcamp-chip" style="background:${camp.cor}">${esc(camp.nome)}</span>`:`<span class="kcamp-chip" style="background:#94A3B8">Sem campanha</span>`}${p.canal?`<span class="chan">📣 ${esc(p.canal)}</span>`:''}${p.data?`<span class="meta-i">🗓️ ${fmtShort(p.data)}</span>`:''}</div>${revisadoLine(p)}${p.aprov==='alteracao'&&req?`<div class="kc-coment" style="margin-top:7px">✏️ ${esc(req.comentario)}<div class="kc-hist">🕒 ${esc(fmtDateTime(req.ts))}${req.autor?' · '+esc(req.autor):''}</div></div>`:''}</div><div class="tr-actions"><select class="tstat" data-aprid="${p.id}">${APROV_COLS.map(c=>`<option value="${c.id}"${p.aprov===c.id?' selected':''}>${c.nome}</option>`).join('')}</select><button class="icon-btn" data-postedit="${p.id}" title="Editar arte">${EDIT_SVG}</button></div></div>`;
@@ -5517,11 +5519,11 @@ $('#aprSortFilter').addEventListener('change',e=>{aprSort=e.target.value;renderA
 $('#aprDateFilter').addEventListener('change',e=>{aprDateMode=e.target.value;renderAprov();});
 $('#aprDateStart').addEventListener('input',e=>{aprDateStart=e.target.value;renderAprov();});
 $('#aprDateEnd').addEventListener('input',e=>{aprDateEnd=e.target.value;renderAprov();});
-$('#addAprovPostBtn').addEventListener('click',()=>openPostModal(aprCamp!=='todas'&&aprCamp!=='sem'?aprCamp:'',null,null,{aprov:'enviar'}));
+$('#addAprovPostBtn').addEventListener('click',()=>openPostModal(aprCamp!=='todas'&&aprCamp!=='sem'?aprCamp:'',null,null,{aprov:'producao'}));
 
 /* ---- Link de aprovação (compartilhável) ---- */
 const WARN_ICO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex:0 0 18px;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>';
-function aprovCandidates(){return allPostsFlat().filter(x=>x.p.aprov!=='aprovado');}
+function aprovCandidates(){return allPostsFlat().filter(x=>x.p.aprov!=='aprovado'&&x.p.aprov!=='producao');} // em produção ainda não vai para aprovação
 function buildReviewLink(ids,para){
   let q='?aprovar=1';
   if(ids&&ids.length)q+='&itens='+ids.map(encodeURIComponent).join(',');
@@ -5599,7 +5601,7 @@ function renderReview(){
   const paraEl=$('#reviewPara');if(paraEl)paraEl.innerHTML=para?`<span class="review-para">👤 Aprovação para: ${esc(para)}</span>`:'';
   // se o link traz itens específicos, mostra só esses; senão, todas as pendentes
   const base=sel.length?allPostsFlat().filter(x=>sel.includes(x.p.id)):allPostsFlat();
-  const pend=base.filter(x=>x.p.aprov!=='aprovado');
+  const pend=base.filter(x=>x.p.aprov!=='aprovado'&&x.p.aprov!=='producao');
   const aprovadas=base.filter(x=>x.p.aprov==='aprovado').length;
   const list=$('#reviewList');
   if(!pend.length){

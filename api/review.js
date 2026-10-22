@@ -48,12 +48,16 @@ module.exports = async function handler(req, res) {
     };
     const entry = { id: historyId(), ts: now, status, de: '', autor: revisor, origem: 'link', comentario: status === 'alteracao' ? comentario : '' };
 
+    let emProducao = false;
     const changed = updatePostInData(data, postId, post => {
+      // arte ainda "Em produção" não pode ser aprovada/revisada pelo link
+      if (post.aprov === 'producao') { emProducao = true; return; }
       entry.de = post.aprov || '';
       Object.assign(post, patch);
       post.aprovHistorico = (Array.isArray(post.aprovHistorico) ? post.aprovHistorico : []).concat(entry).slice(-200);
     });
     if (!changed) return res.status(404).json({ error: 'POST_NOT_FOUND' });
+    if (emProducao) return res.status(409).json({ error: 'POST_IN_PRODUCTION' });
 
     await db`
       insert into app_state (id, data, updated_at)
