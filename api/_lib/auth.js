@@ -19,11 +19,15 @@ function authSecret() {
   return 'dev-only-change-this-secret-before-production';
 }
 
+// Sessão de 7 dias, renovada automaticamente enquanto a pessoa usa a plataforma (ver renewSession).
+const SESSION_SECONDS = 7 * 24 * 60 * 60;
+const RENEW_AFTER_SECONDS = 60 * 60; // renova o cookie no máximo 1x por hora
+
 function signSession(user) {
   return jwt.sign(
     { sub: String(user.id), email: user.email, role: user.role || 'admin' },
     authSecret(),
-    { expiresIn: '8h' }
+    { expiresIn: SESSION_SECONDS }
   );
 }
 
@@ -40,7 +44,16 @@ function cookieOptions(maxAge) {
 }
 
 function setSessionCookie(res, token) {
-  res.setHeader('Set-Cookie', cookieOptions(8 * 60 * 60).replace(`${COOKIE_NAME}=`, `${COOKIE_NAME}=${token}`));
+  res.setHeader('Set-Cookie', cookieOptions(SESSION_SECONDS).replace(`${COOKIE_NAME}=`, `${COOKIE_NAME}=${token}`));
+}
+
+// Prorroga a sessão de quem está usando: se o token tem mais de 1h, emite um novo (mais 7 dias).
+function renewSession(req, res, user) {
+  if (!res || !user || typeof res.setHeader !== 'function') return;
+  const session = currentUser(req);
+  if (!session || !session.iat) return;
+  if (Date.now() / 1000 - session.iat < RENEW_AFTER_SECONDS) return;
+  setSessionCookie(res, signSession({ id: user.id, email: user.email, role: user.role }));
 }
 
 function clearSessionCookie(res) {
@@ -74,7 +87,7 @@ async function sessionUser(req) {
 
 async function requireUser(req, res) {
   const user = await sessionUser(req);
-  if (user) return user;
+  if (user) { renewSession(req, res, user); return user; }
   res.status(401).json({ error: 'UNAUTHORIZED' });
   return null;
 }
@@ -97,6 +110,6 @@ function randomToken() {
 
 module.exports = {
   ROLES, WRITE_ROLES, superAdminEmail,
-  signSession, setSessionCookie, clearSessionCookie, currentUser, sessionUser,
+  signSession, setSessionCookie, renewSession, clearSessionCookie, currentUser, sessionUser,
   requireUser, requireAdmin, sha256, randomToken
 };

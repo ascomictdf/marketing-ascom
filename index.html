@@ -2847,15 +2847,26 @@ function setPlatformLocked(locked){
   document.documentElement.classList.toggle('platform-locked',locked);
   if(locked)setTimeout(()=>document.getElementById('platformLoginEmail')?.focus(),80);
 }
-async function platformMe(){
+// Verifica a sessão: 'ok' (logado) | 'nao' (sem sessão) | 'erro' (não deu para verificar: rede/banco).
+// Um 'erro' NÃO desloga: a sessão continua valendo e a verificação é repetida.
+async function platformCheck(){
   try{
-    const r=await fetch('/api/auth/me',{credentials:'include'});
+    const r=await fetch('/api/auth/me',{credentials:'include',cache:'no-store'});
     const d=await r.json().catch(()=>({}));
-    window.__platformDbError=(r.status>=500)?(d.message||'Falha de configuração do banco.'):'';
+    if(r.status>=500){window.__platformDbError=d.message||'Falha temporária do servidor.';return 'erro';}
+    window.__platformDbError='';
     window.__platformUser=(r.ok&&d.authenticated)?d.user:null;
-    return !!(r.ok&&d.authenticated);
-  }catch(e){window.__platformUser=null;window.__platformDbError='Não foi possível acessar a API da plataforma.';return false;}
+    return (r.ok&&d.authenticated)?'ok':'nao';
+  }catch(e){window.__platformDbError='Não foi possível acessar a API da plataforma.';return 'erro';}
 }
+// Tenta algumas vezes (o banco gratuito pode levar alguns segundos para "acordar").
+async function platformCheckRetry(){
+  for(let i=0;i<4;i++){const r=await platformCheck();if(r!=='erro')return r;await new Promise(ok=>setTimeout(ok,700*(i+1)));}
+  return 'erro';
+}
+let _meStartup=null; // abertura da página: uma verificação só, compartilhada por quem precisar
+function platformCheckStartup(){return _meStartup||(_meStartup=platformCheckRetry());}
+async function platformMe(){return (await platformCheckRetry())==='ok';}
 async function doPlatformLogin(){
   const email=document.getElementById('platformLoginEmail'), pass=document.getElementById('platformLoginPass'), err=document.getElementById('platformLoginError');
   const btn=document.getElementById('platformLoginBtn');
@@ -2951,10 +2962,10 @@ async function bindPlatformLogin(){
     try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});}catch(e){}
     window.__platformUser=null;setPlatformLocked(true);
   }else{
-    const logged=await platformMe();
-    setPlatformLocked(!logged);
-    const err=document.getElementById('platformLoginError');
-    if(!logged&&window.__platformDbError&&err){err.textContent='Servidor/banco não configurado: '+window.__platformDbError;err.style.display='flex';}
+    const st=await platformCheckStartup();
+    const logged=st==='ok';
+    if(st==='erro'){showReconnect('verificar');}  // sem conexão agora: não manda para o login
+    else setPlatformLocked(!logged);
   }
   document.getElementById('platformLoginBtn')?.addEventListener('click',doPlatformLogin);
   document.getElementById('platformLoginPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doPlatformLogin();});
@@ -3378,12 +3389,22 @@ async function pollCloud(){
       }
     });
     if(mudou){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));}catch(e){}renderBadges();if(view==='aprovacao')renderAprov();if(view==='calendario')renderGeralCalendar();if(view==='campanha')renderCampCalendar();if(document.body.classList.contains('review-on'))renderReview();}
-  }catch(err){console.error(err);setSync('erro',err&&err.message==='UNAUTHORIZED'?'sessao':'');}
+  }catch(err){
+    console.error(err);
+    if(err&&err.message==='UNAUTHORIZED'){const st=await platformCheckRetry();if(st!=='nao'){setSync(st==='ok'?'ok':'erro');return;}}
+    setSync('erro',err&&err.message==='UNAUTHORIZED'?'sessao':'');
+  }
 }
 function startPolling(){clearInterval(pollTimer);pollTimer=null;if(DataBackend.connected())pollTimer=setInterval(pollCloud,20000);}
 /* ---- reconexão: tela embaçada + botão de recarregar ---- */
 function showReconnect(motivo){
   const ov=$('#reconnectOverlay');if(!ov)return;
+  if(motivo==='verificar'){ // não foi possível confirmar a sessão ao abrir (rede/banco): oferece tentar de novo
+    $('#reconnectTitle').textContent='Não foi possível conectar';
+    $('#reconnectMsg').textContent='A conexão com o servidor falhou ao abrir a plataforma. Sua sessão continua válida — clique no ícone para tentar de novo.';
+    ov.classList.add('show');ov.setAttribute('aria-hidden','false');document.body.classList.add('reconnect-on');
+    setTimeout(()=>$('#reconnectBtn')?.focus(),60);return;
+  }
   if(!REVIEW_MODE&&!Auth.loggedIn())return; // ainda/já na tela de login
   const sessao=motivo==='sessao';
   $('#reconnectTitle').textContent=sessao?'Sua sessão expirou':'Conexão com o banco perdida';
@@ -6820,7 +6841,7 @@ async function boot(){
       console.error(err);state=normalize(DataBackend._localOrSeed());compactState();setSync('erro');
     }
   }else{
-    const logged=!new URLSearchParams(location.search).get('reset')&&await platformMe(); // link de nova senha: fica na tela de login
+    const logged=!new URLSearchParams(location.search).get('reset')&&(await platformCheckStartup())==='ok'; // link de nova senha: fica na tela de login
     if(logged){
     try{
       state=normalize(await DataBackend.loadAll(false));compactState();

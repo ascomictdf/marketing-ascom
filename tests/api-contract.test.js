@@ -157,6 +157,13 @@ async function call(handler, method, body, cookie) {
 
   const session = await call(me, 'GET', null, adminCookie);
   assert.equal(session.payload.authenticated, true, 'sessao admin deve ser reconhecida');
+  assert.ok(/Max-Age=604800/.test(adminCookie), 'sessao dura 7 dias');
+  assert.equal(session.headers['set-cookie'], undefined, 'sessao recente nao precisa ser renovada');
+  const jwt = require('jsonwebtoken');
+  const antigo = jwt.sign({ sub: '1', email: 'ascom@ictdf.org.br', role: 'admin', iat: Math.floor(Date.now() / 1000) - 2 * 3600 }, 'test-secret', { expiresIn: 604800 });
+  const renovada = await call(me, 'GET', null, 'ictdf_session=' + antigo);
+  assert.equal(renovada.payload.authenticated, true);
+  assert.ok((renovada.headers['set-cookie'] || '').includes('ictdf_session='), 'sessao em uso ha mais de 1h e renovada automaticamente');
 
   const created = await call(users, 'POST', { email: 'editor@ictdf.org.br', password: 'senha123', role: 'editor' }, adminCookie);
   assert.equal(created.statusCode, 200, 'admin deve criar usuario');
