@@ -1311,6 +1311,9 @@ body.readonly .fv-node .fn-status{pointer-events:none}
 .cc-card .cc-help{width:100%;margin-top:8px;min-height:54px;resize:vertical;font-size:13px}
 .cc-card .cc-help-label{display:block;font-size:11.5px;font-weight:700;color:var(--texto-suave);margin-top:9px}
 
+/* ===== CALENDÁRIO: aviso de posts passados ocultos ===== */
+.past-note{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:10px 14px;border:1px dashed var(--cinza-borda);border-radius:12px;background:var(--surface-2);font-size:13px;font-weight:600;color:var(--texto-suave)}
+.past-note span{flex:1;min-width:200px}
 /* ===== RESPONSÁVEL: marcar meu nome ===== */
 .resp-wrap{display:flex;align-items:center;gap:8px}
 .resp-wrap select{flex:1;min-width:0}
@@ -1662,6 +1665,8 @@ body.reconnect-on{overflow:hidden}
             <select id="calCanalFilter" class="chip"></select>
             <div class="date-filter">
               <select id="calDateFilter" class="chip">
+                <option value="proximos">📅 De hoje em diante</option>
+                <option value="passados">⏪ Datas passadas</option>
                 <option value="todos">Todo o período</option>
                 <option value="7">Última semana</option>
                 <option value="15">Últimos 15 dias</option>
@@ -1708,6 +1713,8 @@ body.reconnect-on{overflow:hidden}
           <select id="gcalSortFilter" class="chip" title="Reorganizar artes"><option value="data">↕ Data (mais próxima)</option><option value="titulo">↕ Nome (A→Z)</option></select>
           <div class="date-filter">
             <select id="gcalDateFilter" class="chip">
+              <option value="proximos">📅 De hoje em diante</option>
+              <option value="passados">⏪ Datas passadas</option>
               <option value="todos">Todo o período</option>
               <option value="7">Última semana</option>
               <option value="15">Últimos 15 dias</option>
@@ -3509,9 +3516,9 @@ let currentAgentId=null;    // agente aberto no drawer
 let fileAddMode='link';     // agentes aceitam apenas links, para economizar banco
 let calView='agenda';       // 'agenda' | 'mes'
 let currentCalMonth=new Date();
-let calFilterStatus='todos', calFilterCanal='todos', calDateMode='todos', calDateStart='', calDateEnd='', calCollapsed=false, calShowAll=false, calRenderedCampId=null;
+let calFilterStatus='todos', calFilterCanal='todos', calDateMode='proximos', calDateStart='', calDateEnd='', calCollapsed=false, calShowAll=false, calRenderedCampId=null;
 // novas views
-let gcalView='agenda', gcalMonth=new Date(), gcalCamp='todas', gcalAprov='todos', gcalSort='data', gcalDateMode='todos', gcalDateStart='', gcalDateEnd='';
+let gcalView='agenda', gcalMonth=new Date(), gcalCamp='todas', gcalAprov='todos', gcalSort='data', gcalDateMode='proximos', gcalDateStart='', gcalDateEnd='';
 let tarView='kanban', tarCamp='todas', tarPrio='todas', tarResp='todos', tarSort='recentes', tarDateMode='todos', tarDateStart='', tarDateEnd='';
 let aprView='kanban', aprCamp='todas', aprStatus='todos', aprSort='data', aprDateMode='todos', aprDateStart='', aprDateEnd='';
 let fluxCamp='todas', fluxSort='recentes';
@@ -3616,6 +3623,8 @@ function daysAgo(n){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()
 function inDateRange(iso,mode,start,end){
   if(mode==='todos')return true;
   const key=isoKey(iso);if(!key)return false;
+  if(mode==='proximos')return key>=toISODate(new Date()); // de hoje em diante
+  if(mode==='passados')return key<toISODate(new Date());  // antes de hoje
   let a=start||'',b=end||'';
   if(mode==='7'){a=daysAgo(6);b=toISODate(new Date());}
   else if(mode==='15'){a=daysAgo(14);b=toISODate(new Date());}
@@ -4080,6 +4089,17 @@ async function shrinkStoredImages(){
 }
 
 /* ============ CALENDÁRIO EDITORIAL ============ */
+// Aviso quando o calendário mostra só "de hoje em diante" e há posts anteriores escondidos
+function pastHiddenNote(n,alvo){
+  if(!n)return '';
+  return `<div class="past-note"><span>🕘 ${n} post${n>1?'s':''} com data anterior a hoje não ${n>1?'aparecem':'aparece'} aqui.</span><button type="button" class="btn btn-ghost btn-sm" data-showpast="${alvo}">Ver datas passadas</button></div>`;
+}
+function bindShowPast(root){
+  $$('[data-showpast]',root).forEach(b=>b.addEventListener('click',()=>{
+    if(b.dataset.showpast==='gcal'){gcalDateMode='passados';renderGeralCalendar();}
+    else{calDateMode='passados';calShowAll=false;renderCampCalendar();}
+  }));
+}
 function filteredPosts(c){
   const q=filters.search.toLowerCase().trim();
   return (c.posts||[]).filter(p=>
@@ -4090,7 +4110,7 @@ function filteredPosts(c){
   );
 }
 function campPostFiltersActive(){
-  return calFilterStatus!=='todos'||calFilterCanal!=='todos'||calDateMode!=='todos'||!!filters.search.trim();
+  return calFilterStatus!=='todos'||calFilterCanal!=='todos'||calDateMode!=='proximos'||!!filters.search.trim();
 }
 function applyCalCollapse(){
   $('#calControls').style.display=calCollapsed?'none':'';
@@ -4111,10 +4131,14 @@ function renderCampCalendar(){
   syncDateControls('cal',calDateMode,calDateStart,calDateEnd);
   // contador
   const total=(c.posts||[]).length, shown=filteredPosts(c).length;
-  $('#calCount').textContent=campPostFiltersActive()?`${shown} de ${total}`:`${total} post${total!==1?'s':''}`;
+  $('#calCount').textContent=(campPostFiltersActive()||shown!==total)?`${shown} de ${total} posts`:`${total} post${total!==1?'s':''}`;
   applyCalCollapse();
   if(calCollapsed)return;
   if(calView==='mes')renderMonthView(c);else renderAgendaView(c);
+  if(calDateMode==='proximos'){
+    const modo=calDateMode;calDateMode='passados';const ocultos=filteredPosts(c).length;calDateMode=modo;
+    const el=$('#campCalendar');el.insertAdjacentHTML('afterbegin',pastHiddenNote(ocultos,'cal'));bindShowPast(el);
+  }
 }
 function postRowHTML(p,campId){
   const cor=postStatusColor(p.status);
@@ -4137,7 +4161,7 @@ function renderAgendaView(c){
   const posts=[...filteredPosts(c)].sort((a,b)=>(a.data||'').localeCompare(b.data||''));
   if(!posts.length){
     const filtro=campPostFiltersActive();
-    $('#campCalendar').innerHTML=`<div class="empty"><div class="big">🗓️</div><h3>${filtro?'Nenhum post com esse filtro':'Nenhum post no calendário'}</h3><p>${filtro?'Ajuste os filtros acima.':'Adicione os posts da campanha com data de publicação e link.'}</p>${filtro?'':'<button class="btn btn-primary" onclick="openPostModal(currentCampId)">Novo post</button>'}</div>`;return;}
+    $('#campCalendar').innerHTML=`<div class="empty"><div class="big">🗓️</div><h3>${filtro?'Nenhum post com esse filtro':(c.posts||[]).length?'Nenhum post de hoje em diante':'Nenhum post no calendário'}</h3><p>${filtro?'Ajuste os filtros acima.':'Adicione os posts da campanha com data de publicação e link.'}</p>${filtro?'':'<button class="btn btn-primary" onclick="openPostModal(currentCampId)">Novo post</button>'}</div>`;return;}
   const today=toISODate(new Date());
   const visible=calShowAll?posts:posts.slice(0,3);
   const groups={};visible.forEach(p=>{(groups[p.data]=groups[p.data]||[]).push(p)});
@@ -4212,6 +4236,10 @@ function renderGeralCalendar(){
   const entries=gcalEntries();
   $('#gcalCount').textContent=`${entries.length} arte${entries.length!==1?'s':''}`;
   if(gcalView==='mes')renderGeralMonth(entries);else renderGeralAgenda(entries);
+  if(gcalDateMode==='proximos'){
+    const modo=gcalDateMode;gcalDateMode='passados';const ocultos=gcalEntries().length;gcalDateMode=modo;
+    const el=$('#geralCalendar');el.insertAdjacentHTML('afterbegin',pastHiddenNote(ocultos,'gcal'));bindShowPast(el);
+  }
 }
 function renderGeralAgenda(entries){
   const el=$('#geralCalendar');
